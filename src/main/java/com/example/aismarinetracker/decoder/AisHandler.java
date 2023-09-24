@@ -7,6 +7,7 @@ import com.sun.tools.javac.Main;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AisHandler {
@@ -16,14 +17,14 @@ public class AisHandler {
 
 
     public AisHandler() {
-        logger.setLevel(java.util.logging.Level.OFF);
+        logger.setLevel(Level.OFF);
         this.aisMessageFactory = new AisMessageFactory();
     }
 
     public AisMessage handleAisMessage(String... nmeaMessage) {
         for (String s : nmeaMessage)
             if (!isMessageFormatValid(s)) {
-                return null;
+                throw new RuntimeException("Invalid message format");
             }
 
         RawAisMessage[] rawAisMessages = new RawAisMessage[nmeaMessage.length];
@@ -54,8 +55,8 @@ public class AisHandler {
             logger.info("Invalid number of fields");
             return false;
         }
-        if (!message.startsWith("!AVIDM") || !message.startsWith("!BSVDM")) {
-            logger.info("Invalid message prefix");
+        if (!message.startsWith("!AIVDM") && !message.startsWith("!BSVDM") && !message.startsWith("!AIVDO") && !message.startsWith("!BSVDO")) {
+            logger.info("Invalid message prefix expected: !AIVDM or !BSVDM but was: " + message.substring(0, 6));
             return false;
         }
 
@@ -76,6 +77,10 @@ public class AisHandler {
         }
 
         var calculatedChecksum = Decoders.calculateChecksum(messageWithoutChecksum);
+        if (!calculatedChecksum.equalsIgnoreCase(checksum)) {
+            logger.info("Invalid checksum expected: " + calculatedChecksum + " but was: " + checksum);
+            return false;
+        }
         return calculatedChecksum.equalsIgnoreCase(checksum);
     }
 }
