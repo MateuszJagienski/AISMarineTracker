@@ -23,7 +23,7 @@ public class AisHandler {
 
     public AisMessage handleAisMessage(String... nmeaMessage) {
         for (String s : nmeaMessage)
-            if (!isMessageFormatValid(s)) {
+            if (!AisValidator.isMessageFormatValid(s)) {
                 throw new RuntimeException("Invalid message format");
             }
 
@@ -48,39 +48,5 @@ public class AisHandler {
         return new RawAisMessage(messageFields[0], Integer.parseInt(messageFields[1]),
                 Integer.parseInt(messageFields[2]), messageFields[3], messageFields[4],
                 messageFields[5], Integer.parseInt(messageFields[6]), checksum);
-    }
-
-    private boolean isMessageFormatValid(String message) {
-        if (message.split(",").length != 7) {
-            logger.info("Invalid number of fields");
-            return false;
-        }
-        if (!message.startsWith("!AIVDM") && !message.startsWith("!BSVDM") && !message.startsWith("!AIVDO") && !message.startsWith("!BSVDO")) {
-            logger.info("Invalid message prefix expected: !AIVDM or !BSVDM but was: " + message.substring(0, 6));
-            return false;
-        }
-
-        return isCheckSumValid(message);
-    }
-
-    private boolean isCheckSumValid(String message) {
-        var messageParts = message.split("\\*");
-        if (messageParts.length != 2) {
-            logger.info("message doesnt contain checksum");
-            return false;
-        }
-        var checksum = messageParts[1];
-        var messageWithoutChecksum = messageParts[0];
-
-        if (messageWithoutChecksum.startsWith("!") || messageWithoutChecksum.startsWith("$")) {
-            messageWithoutChecksum = messageWithoutChecksum.substring(1);
-        }
-
-        var calculatedChecksum = Decoders.calculateChecksum(messageWithoutChecksum);
-        if (!calculatedChecksum.equalsIgnoreCase(checksum)) {
-            logger.info("Invalid checksum expected: " + calculatedChecksum + " but was: " + checksum);
-            return false;
-        }
-        return calculatedChecksum.equalsIgnoreCase(checksum);
     }
 }
