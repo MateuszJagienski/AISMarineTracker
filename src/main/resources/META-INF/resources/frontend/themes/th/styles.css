@@ -1,0 +1,33 @@
+vaadin-grid vaadin-grid-cell-content {
+    white-space: normal;
+}
+
+#ship_name {
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 14px;
+    color: azure;
+    text-underline-color: blue;
+}
+
+#ship_name:hover {
+    text-decoration: underline;
+}
+
+#ship_type {
+    font-size: 12px;
+    line-height: 12px;
+    color: azure;
+    text-decoration-color: azure;
+}
+
+#ship_type:hover {
+    text-decoration: underline;
+}
+
+
+#overlay_text {
+    font-size: 12px;
+    line-height: 12px;
+    color: azure;
+}

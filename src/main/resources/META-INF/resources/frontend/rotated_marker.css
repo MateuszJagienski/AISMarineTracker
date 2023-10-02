@@ -1,0 +1,153 @@
+/*ship icons*/
+
+/*passenger*/
+.vessel-icon-passenger-0 {
+    background-position: 0px 0px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+.vessel-icon-passenger-1 {
+    background-position: 0px -24px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+/*cargo*/
+.vessel-icon-cargo-0 {
+    background-position: -72px 0px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+.vessel-icon-cargo-1 {
+    background-position: -72px -24px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+/*tanker*/
+.vessel-icon-tanker-0 {
+    background-position: -24px 0px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+.vessel-icon-tanker-1 {
+    background-position: -24px -24px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+/*hsc*/
+.vessel-icon-hsc-0 {
+    background-position: -48px 0px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+.vessel-icon-hsc-1 {
+    background-position: -48px -24px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+/*tugspecialcraft*/
+.vessel-icon-tugspecialcraft-0 {
+    background-position: -120px 0px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+.vessel-icon-tugspecialcraft-1 {
+    background-position: -120px -24px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+/*pleasure*/
+.vessel-icon-pleasure-0 {
+    background-position: -144px 0px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+.vessel-icon-pleasure-1 {
+    background-position: -144px -24px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+/*fishing*/
+.vessel-icon-fishing-0 {
+    background-position: -168px 0px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+.vessel-icon-fishing-1 {
+    background-position: -168px -24px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+/*other*/
+.vessel-icon-other-0 {
+    background-position: -96px 0px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
+
+.vessel-icon-other-1 {
+    background-position: -96px -24px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    background-image: url('../img/transparentShipIcons.png');
+    background-repeat: no-repeat;
+}
