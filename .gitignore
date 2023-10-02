@@ -59,6 +59,13 @@ mvnw
 tsconfig.json
 types.d.ts
 index.html
+package.json
+package-lock.json
+webpack.config.js
+vite.config.ts
+/*/frontend/generated/
+/*/frontend/index.html
+/*/src/main/dev-bundle/
 
 # dev-bundle
 **/src/main/**/dev-bundle/
