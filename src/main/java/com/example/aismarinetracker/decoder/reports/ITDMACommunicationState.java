@@ -16,4 +16,14 @@ public class ITDMACommunicationState implements ICommunicationState {
     public SyncState getSyncState() {
         return syncState;
     }
+
+    @Override
+    public String toString() {
+        return "ITDMACommunicationState{" +
+                "syncState=" + syncState +
+                ", slotIncrement=" + slotIncrement +
+                ", numberOfSlots=" + numberOfSlots +
+                ", keepFlag=" + keepFlag +
+                '}';
+    }
 }

@@ -37,4 +37,20 @@ public class SOTDMACommunicationState implements ICommunicationState {
     public SyncState getSyncState() {
         return syncState;
     }
+
+    @Override
+    public String toString() {
+        return """
+                SOTDMACommunicationState{
+                    syncState=%s,
+                    slotTimeout=%d,
+                    subMessage='%s',
+                    receivedStations=%d,
+                    slotNumber=%d,
+                    utcHour=%d,
+                    utcMinute=%d,
+                    slotOffset=%d
+                }
+                """.formatted(syncState, slotTimeout, subMessage, receivedStations, slotNumber, utcHour, utcMinute, slotOffset);
+    }
 }
