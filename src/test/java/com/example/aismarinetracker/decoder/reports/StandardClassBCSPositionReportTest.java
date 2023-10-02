@@ -24,7 +24,7 @@ class StandardClassBCSPositionReportTest {
     @DisplayName("Correct message type")
     void getMessageType() {
         var expected = MessageType.StandardClassBCSPositionReport;
-        assertEquals(expected, aisMessage.decodeMessageType());
+        assertEquals(expected, aisMessage.getMessageType());
     }
 
     @Test

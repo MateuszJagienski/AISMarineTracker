@@ -7,7 +7,7 @@ import com.example.aismarinetracker.decoder.enums.ShipType;
 import lombok.Getter;
 
 @Getter
-public class ShipAndVoyageRelatedData extends AisMessage {
+public class StaticAndVoyageRelatedData extends AisMessage {
 
     private int aisVersion;
     private int imoNumber;
@@ -28,7 +28,7 @@ public class ShipAndVoyageRelatedData extends AisMessage {
     private boolean dte;
 
 
-    public ShipAndVoyageRelatedData(String messagePayload) {
+    public StaticAndVoyageRelatedData(String messagePayload) {
         super(messagePayload);
         decode();
     }
@@ -54,70 +54,70 @@ public class ShipAndVoyageRelatedData extends AisMessage {
     }
 
     public int decodeAisVersion() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(38, 40));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(38, 40));
     }
 
     public int decodeImoNumber() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(40, 70));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(40, 70));
     }
 
     public String decodeCallSign() {
-        return Decoders.toAsciiString(getMessagePayload().substring(70, 112));
+        return Decoders.toAsciiString(getBinaryMessagePayload().substring(70, 112));
     }
 
     public String decodeVesselName() {
-        return Decoders.toAsciiString(getMessagePayload().substring(112, 232));
+        return Decoders.toAsciiString(getBinaryMessagePayload().substring(112, 232));
     }
 
     public ShipType decodeShipType() {
-        return ShipType.from(Decoders.toInteger(getMessagePayload().substring(232, 240)));
+        return ShipType.from(Decoders.toInteger(getBinaryMessagePayload().substring(232, 240)));
     }
 
     public int decodeDimensionToBow() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(240, 249));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(240, 249));
     }
 
     public int decodeDimensionToStern() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(249, 258));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(249, 258));
     }
 
     public int decodeDimensionToPort() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(258, 264));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(258, 264));
     }
 
     public int decodeDimensionToStarboard() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(264, 270));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(264, 270));
     }
 
     public EPFD decodeTypeOfEPFD() {
-        return EPFD.from(Decoders.toInteger(getMessagePayload().substring(270, 274)));
+        return EPFD.from(Decoders.toInteger(getBinaryMessagePayload().substring(270, 274)));
     }
 
     public int decodeMonth() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(274, 278));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(274, 278));
     }
 
     public int decodeDay() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(278, 283));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(278, 283));
     }
 
     public int decodeHour() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(283, 288));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(283, 288));
     }
 
     public int decodeMinute() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(288, 294));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(288, 294));
     }
 
     public float decodeDraught() {
-        return Decoders.toUnsignedFloat(getMessagePayload().substring(294, 302)) / 10f;
+        return Decoders.toUnsignedFloat(getBinaryMessagePayload().substring(294, 302)) / 10f;
     }
 
     public String decodeDestination() {
-        return Decoders.toAsciiString(getMessagePayload().substring(302, 422));
+        return Decoders.toAsciiString(getBinaryMessagePayload().substring(302, 422));
     }
 
     public boolean decodeDte() {
-        return Decoders.toBoolean(getMessagePayload().substring(422, 423));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(422, 423));
     }
 }

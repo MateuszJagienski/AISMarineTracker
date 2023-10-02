@@ -48,75 +48,75 @@ public class StandardClassBCSPositionReport extends AisMessage {
     }
 
     public float decodeSpeedOverGround() {
-        return Decoders.toUnsignedFloat(getMessagePayload().substring(46, 56)) / 10;
+        return Decoders.toUnsignedFloat(getBinaryMessagePayload().substring(46, 56)) / 10;
     }
 
     public boolean decodePositionAccurate() {
-        return Decoders.toBoolean(getMessagePayload().substring(56, 57));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(56, 57));
     }
 
     public float decodeLongitude() {
-        var longitude = Decoders.toFloat(getMessagePayload().substring(57, 85));
+        var longitude = Decoders.toFloat(getBinaryMessagePayload().substring(57, 85));
         return longitude / 600000f;
     }
 
     public float decodeLatitude() {
-        var latitude = Decoders.toFloat(getMessagePayload().substring(85, 112));
+        var latitude = Decoders.toFloat(getBinaryMessagePayload().substring(85, 112));
         return latitude / 600000f;
     }
 
     public float decodeCourseOverGround() {
-        return Decoders.toUnsignedFloat(getMessagePayload().substring(112, 124)) / 10f;
+        return Decoders.toUnsignedFloat(getBinaryMessagePayload().substring(112, 124)) / 10f;
     }
 
     public int decodeTrueHeading() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(124, 133));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(124, 133));
     }
 
     public int decodeTimeStamp() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(133, 139));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(133, 139));
     }
 
     public boolean decodeCsUnit() {
-        return Decoders.toBoolean(getMessagePayload().substring(141, 142));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(141, 142));
     }
 
     public boolean decodeDisplay() {
-        return Decoders.toBoolean(getMessagePayload().substring(142, 143));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(142, 143));
     }
 
     public boolean decodeDsc() {
-        return Decoders.toBoolean(getMessagePayload().substring(143, 144));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(143, 144));
     }
 
     public boolean decodeBand() {
-        return Decoders.toBoolean(getMessagePayload().substring(144, 145));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(144, 145));
     }
 
     public boolean decodeMessage22() {
-        return Decoders.toBoolean(getMessagePayload().substring(145, 146));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(145, 146));
     }
 
     public boolean decodeAssigned() {
-        return Decoders.toBoolean(getMessagePayload().substring(146, 147));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(146, 147));
     }
 
     public boolean decodeRaimFlag() {
-        return Decoders.toBoolean(getMessagePayload().substring(147, 148));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(147, 148));
     }
 
     public ICommunicationState decodeRadioStatus() {
-        var selectorFlag = Decoders.toBoolean(getMessagePayload().substring(148, 149));
-        SyncState syncState = SyncState.from(Decoders.toUnsignedInteger(getMessagePayload().substring(149, 151)));
+        var selectorFlag = Decoders.toBoolean(getBinaryMessagePayload().substring(148, 149));
+        SyncState syncState = SyncState.from(Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(149, 151)));
         if (selectorFlag) {
             // ITDMA communication state
-            return new ITDMACommunicationState(syncState, Decoders.toUnsignedInteger(getMessagePayload().substring(151, 164)),
-                    Decoders.toUnsignedInteger(getMessagePayload().substring(164, 167)),
-                    Decoders.toBoolean(getMessagePayload().substring(167, 168)));
+            return new ITDMACommunicationState(syncState, Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(151, 164)),
+                    Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(164, 167)),
+                    Decoders.toBoolean(getBinaryMessagePayload().substring(167, 168)));
         } else {
             // SOTDMA communication state
-            return new SOTDMACommunicationState(syncState, Decoders.toUnsignedInteger(getMessagePayload().substring(151, 154)),
-                    getMessagePayload().substring(154, 168));
+            return new SOTDMACommunicationState(syncState, Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(151, 154)),
+                    getBinaryMessagePayload().substring(154, 168));
         }
     }
 }

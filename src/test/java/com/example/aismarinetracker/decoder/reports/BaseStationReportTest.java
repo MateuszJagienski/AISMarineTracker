@@ -23,7 +23,7 @@ class BaseStationReportTest {
     void getMMSI() {
         if (aisMessage instanceof BaseStationReport) {
             var expected = 2610800;
-            assertEquals(expected, (aisMessage).decodeMMSI());
+            assertEquals(expected, (aisMessage).getMMSI());
         }
     }
 

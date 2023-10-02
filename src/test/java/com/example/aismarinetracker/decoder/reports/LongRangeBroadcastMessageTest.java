@@ -24,7 +24,7 @@ class LongRangeBroadcastMessageTest {
     void getMessageType() {
         var expected = MessageType.PositionReportForLongRangeApplications;
 
-        assertEquals(expected, aisMessage.decodeMessageType());
+        assertEquals(expected, aisMessage.getMessageType());
     }
 
     @Test

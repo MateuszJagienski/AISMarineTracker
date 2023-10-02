@@ -14,12 +14,12 @@ public abstract class AisMessage {
     private int MMSI;
     private MessageType messageType;
     @JsonIgnore
-    private final String messagePayload;
+    private final String binaryMessagePayload;
 
     private static final Logger logger = Logger.getLogger(AisMessage.class.getName());
 
-    protected AisMessage(String messagePayload) {
-        this.messagePayload = messagePayload;
+    protected AisMessage(String binaryMessagePayload) {
+        this.binaryMessagePayload = binaryMessagePayload;
         decode();
     }
 
@@ -28,11 +28,11 @@ public abstract class AisMessage {
         this.messageType = decodeMessageType();
     }
 
-    public int decodeMMSI() {
-        return Decoders.toUnsignedInteger(messagePayload.substring(8, 38));
+    private int decodeMMSI() {
+        return Decoders.toUnsignedInteger(binaryMessagePayload.substring(8, 38));
     }
 
-    public MessageType decodeMessageType() {
-        return MessageType.from(Integer.parseInt(messagePayload.substring(0, 6), 2));
+    private MessageType decodeMessageType() {
+        return MessageType.from(Integer.parseInt(binaryMessagePayload.substring(0, 6), 2));
     }
 }

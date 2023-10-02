@@ -42,54 +42,54 @@ public class BaseStationReport extends AisMessage {
     }
 
     public int decodeYear() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(38, 52)); // todo dlaczego tak duzo bitow?
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(38, 52)); // todo dlaczego tak duzo bitow?
     }
 
     public int decodeMonth() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(52, 56));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(52, 56));
     }
 
     public int decodeDay() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(56, 61));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(56, 61));
     }
 
     public int decodeHour() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(61, 66));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(61, 66));
     }
 
     public int decodeMinute() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(66, 72));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(66, 72));
     }
 
     public int decodeSecond() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(72, 78));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(72, 78));
     }
 
     public boolean decodeFixQuality() {
-        return Decoders.toBoolean(getMessagePayload().substring(78, 79));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(78, 79));
     }
 
     public float decodeLongitude() {
-        var longitude = Decoders.toFloat(getMessagePayload().substring(79, 107));
+        var longitude = Decoders.toFloat(getBinaryMessagePayload().substring(79, 107));
         return longitude / 600000f;
     }
 
     public float decodeLatitude() {
-        var latitude = Decoders.toFloat(getMessagePayload().substring(107, 134));
+        var latitude = Decoders.toFloat(getBinaryMessagePayload().substring(107, 134));
         return latitude / 600000f;
     }
 
     public EPFD decodeTypeOfEPFD() {
-        return EPFD.from(Decoders.toInteger(getMessagePayload().substring(134, 138)));
+        return EPFD.from(Decoders.toInteger(getBinaryMessagePayload().substring(134, 138)));
     }
 
     public boolean decodeRaimFlag() {
-        return Decoders.toBoolean(getMessagePayload().substring(148, 149));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(148, 149));
     }
 
     public ICommunicationState decodeSOTDMAState() {
-        SyncState syncState = SyncState.from(Decoders.toUnsignedInteger(getMessagePayload().substring(149, 151)));
-        return new SOTDMACommunicationState(syncState, Decoders.toUnsignedInteger(getMessagePayload().substring(151, 154)),
-                getMessagePayload().substring(154, 168));
+        SyncState syncState = SyncState.from(Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(149, 151)));
+        return new SOTDMACommunicationState(syncState, Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(151, 154)),
+                getBinaryMessagePayload().substring(154, 168));
     }
 }

@@ -29,7 +29,7 @@ class ExtendedClassBEquipmentPositionReportTest {
     )
     void getMessageType() {
         var expected = MessageType.ExtendedClassBEquipmentPositionReport;
-        assertEquals(expected, aisMessage.decodeMessageType());
+        assertEquals(expected, aisMessage.getMessageType());
     }
     @Test
     void getRegionalReserved() {

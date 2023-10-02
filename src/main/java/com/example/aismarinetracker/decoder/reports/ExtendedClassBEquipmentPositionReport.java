@@ -57,79 +57,79 @@ public class ExtendedClassBEquipmentPositionReport extends AisMessage {
     }
 
     public int decodeRegionalReserved() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(38, 46));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(38, 46));
     }
 
     public int decodeRegionalReserved1() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(139, 143));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(139, 143));
     }
 
     public float decodeSpeedOverGround() {
-        return Decoders.toUnsignedFloat(getMessagePayload().substring(46, 56)) / 10f;
+        return Decoders.toUnsignedFloat(getBinaryMessagePayload().substring(46, 56)) / 10f;
     }
 
     public boolean isPositionAccurate() {
-        return Decoders.toBoolean(getMessagePayload().substring(56, 57));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(56, 57));
     }
 
     public float decodeLongitude() {
-        var longitude = Decoders.toFloat(getMessagePayload().substring(57, 85));
+        var longitude = Decoders.toFloat(getBinaryMessagePayload().substring(57, 85));
         return longitude / 600000f;
     }
 
     public float decodeLatitude() {
-        var latitude = Decoders.toFloat(getMessagePayload().substring(85, 112));
+        var latitude = Decoders.toFloat(getBinaryMessagePayload().substring(85, 112));
         return latitude / 600000f;
     }
 
     public float decodeCourseOverGround() {
-        return Decoders.toUnsignedFloat(getMessagePayload().substring(112, 124)) / 10f;
+        return Decoders.toUnsignedFloat(getBinaryMessagePayload().substring(112, 124)) / 10f;
     }
 
     public int decodeTrueHeading() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(124, 133));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(124, 133));
     }
     public int decodeTimeStamp() {
-        return Decoders.toInteger(getMessagePayload().substring(133, 139));
+        return Decoders.toInteger(getBinaryMessagePayload().substring(133, 139));
     }
 
     public String decodeName() {
-        return Decoders.toAsciiString(getMessagePayload().substring(143, 263));
+        return Decoders.toAsciiString(getBinaryMessagePayload().substring(143, 263));
     }
 
     public ShipType decodeShipType() {
-        return ShipType.from(Decoders.toInteger(getMessagePayload().substring(263, 271)));
+        return ShipType.from(Decoders.toInteger(getBinaryMessagePayload().substring(263, 271)));
     }
 
     public int decodeDimensionToBow() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(271, 280));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(271, 280));
     }
 
     public int decodeDimensionToStern() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(280, 289));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(280, 289));
     }
 
     public int decodeDimensionToPort() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(289, 295));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(289, 295));
     }
 
     public int decodeDimensionToStarboard() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(295, 301));
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(295, 301));
     }
 
     public EPFD decodeTypeOfEPFD() {
-        return EPFD.from(Decoders.toInteger(getMessagePayload().substring(301, 305)));
+        return EPFD.from(Decoders.toInteger(getBinaryMessagePayload().substring(301, 305)));
     }
 
     public boolean decodeRaimFlag() {
-        return Decoders.toBoolean(getMessagePayload().substring(305, 306));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(305, 306));
     }
 
     public boolean decodeDataTerminalReady() {
-        return Decoders.toBoolean(getMessagePayload().substring(306, 307));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(306, 307));
     }
 
     public boolean decodeAssignedModeFlag() {
-        return Decoders.toBoolean(getMessagePayload().substring(307, 308));
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(307, 308));
     }
 }

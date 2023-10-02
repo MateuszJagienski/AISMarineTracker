@@ -24,6 +24,6 @@ class AisMessageTest {
     @DisplayName("getMMSI() returns the MMSI 9-digits number")
     void getMMSI() {
         var expected = 273316400;
-        assertEquals(expected, aisMessage.decodeMMSI());
+        assertEquals(expected, aisMessage.getMMSI());
     }
 }

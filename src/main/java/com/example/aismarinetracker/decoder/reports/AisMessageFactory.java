@@ -13,12 +13,11 @@ public class AisMessageFactory {
             case PositionReportClassAAssignedSchedule -> new PositionReportClassA(messagePayload); // type 2
             case PositionReportClassAResponseToInterrogation -> new PositionReportClassAResponseToInterrogation(messagePayload); // type 3
             case BaseStationReport -> new BaseStationReport(messagePayload); // type 4
-            case ShipAndVoyageRelatedData -> new ShipAndVoyageRelatedData(messagePayload); // type 5
+            case StaticAndVoyageRelatedData -> new StaticAndVoyageRelatedData(messagePayload); // type 5
             case StandardClassBCSPositionReport -> new StandardClassBCSPositionReport(messagePayload); // type 18
             case ExtendedClassBEquipmentPositionReport -> new ExtendedClassBEquipmentPositionReport(messagePayload); // type 19
             case PositionReportForLongRangeApplications -> new PositionReportForLongRangeApplications(messagePayload); // type 27
             default -> throw new UnsupportedMessageType();
-            case Error -> null;
         };
     }
 }

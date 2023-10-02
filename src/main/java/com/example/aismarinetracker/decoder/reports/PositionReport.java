@@ -28,7 +28,7 @@ public class PositionReport extends AisMessage {
         decode();
     }
 
-    public void decode() {
+    private void decode() {
         rateOfTurn = decodeRateOfTurn();
         speedOverGround = decodeSpeedOverGround();
         positionAccurate = decodePositionAccurate();
@@ -43,17 +43,17 @@ public class PositionReport extends AisMessage {
         navigationStatus = decodeNavigationStatus();
     }
 
-    public NavigationStatus decodeNavigationStatus() {
-        return NavigationStatus.from(Decoders.toInteger(getMessagePayload().substring(38, 42)));
+    private NavigationStatus decodeNavigationStatus() {
+        return NavigationStatus.from(Decoders.toInteger(getBinaryMessagePayload().substring(38, 42)));
     }
 
     /**
      https://intapi.sciendo.com/pdf/10.5604/01.3001.0010.6747#:~:text=Rate%20of%20turn%200%20to,of%20Turn%20Indicator%20(TI)
      * */
-    public int decodeRateOfTurn() {
-        float rotSensor = Decoders.toFloat(getMessagePayload().substring(42, 50));
+    private int decodeRateOfTurn() {
+        float rotSensor = Decoders.toFloat(getBinaryMessagePayload().substring(42, 50));
         if (-126f <= rotSensor && rotSensor <= 126f) {
-            var sign = getMessagePayload().charAt(42) == '1' ? -1 : 1;
+            var sign = getBinaryMessagePayload().charAt(42) == '1' ? -1 : 1;
             var rotAis = Math.pow(rotSensor / 4.733, 2);
             return (int) Math.round(rotAis * sign);
         }
@@ -66,8 +66,8 @@ public class PositionReport extends AisMessage {
         // wzor z dokumentacji: https://gpsd.gitlab.io/gpsd/AIVDM.html#_types_1_2_and_3_position_report_class_a
     }
 
-    public float decodeSpeedOverGround() {
-        return Decoders.toUnsignedFloat(getMessagePayload().substring(50, 60)) / 10f;
+    private float decodeSpeedOverGround() {
+        return Decoders.toUnsignedFloat(getBinaryMessagePayload().substring(50, 60)) / 10f;
     }
 
     /**
@@ -76,8 +76,8 @@ public class PositionReport extends AisMessage {
      * True indicates a DGPS-quality fix with an accuracy of < 10ms. False, the default,
      * indicates an unaugmented GNSS fix with accuracy > 10m.
      */
-    public boolean decodePositionAccurate() {
-        return Decoders.toBoolean(getMessagePayload().substring(60, 61));
+    private boolean decodePositionAccurate() {
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(60, 61));
     }
 
     /**
@@ -85,8 +85,8 @@ public class PositionReport extends AisMessage {
      * @return Values up to +- 180 degrees, East is positive, West is negative. A value of 181 degrees (0x6791AC0 hex) indicates
      * that longitude is not available and is the default.
      */
-    public float decodeLongitude() {
-        var longitude = Decoders.toFloat(getMessagePayload().substring(61, 89));
+    private float decodeLongitude() {
+        var longitude = Decoders.toFloat(getBinaryMessagePayload().substring(61, 89));
         return longitude / 600000f;
     }
 
@@ -95,8 +95,8 @@ public class PositionReport extends AisMessage {
      * @return Values up to +- 90 degrees, North is positive, South is negative. A value of 91 degrees (0x3412140 hex) indicates
      * that latitude is not available and is the default.
      */
-    public float decodeLatitude() {
-        var latitude = Decoders.toFloat(getMessagePayload().substring(89, 116));
+    private float decodeLatitude() {
+        var latitude = Decoders.toFloat(getBinaryMessagePayload().substring(89, 116));
         return latitude / 600000f;
     }
 
@@ -105,16 +105,16 @@ public class PositionReport extends AisMessage {
      * @return Values up to 359.9 degrees. A value of 360.0 indicates that
      * COG is not available and is the default.
      */
-    public float decodeCourseOverGround() {
-        return Decoders.toUnsignedFloat(getMessagePayload().substring(116, 128)) / 10f;
+    private float decodeCourseOverGround() {
+        return Decoders.toUnsignedFloat(getBinaryMessagePayload().substring(116, 128)) / 10f;
     }
 
     /**
      *
      * @return 0 to 359 degrees, 511 = not available = default
      */
-    public int decodeTrueHeading() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(128, 137));
+    private int decodeTrueHeading() {
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(128, 137));
     }
 
     /**
@@ -125,41 +125,41 @@ public class PositionReport extends AisMessage {
      * <br>62 if Electronic Position Fixing System operates in estimated (dead reckoning) mode,
      * <br>63 if the positioning system is inoperative.
      */
-    public int decodeTimeStamp() {
-        return Decoders.toUnsignedInteger(getMessagePayload().substring(137, 143));
+    private int decodeTimeStamp() {
+        return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(137, 143));
     }
 
     /**
      *
      * @return 0 - No available <br> 1 - No special maneuver <br> 2 - Special maneuver (such as regional passing arrangement)
      */
-    public ManeuverIndicator decodeManeuverIndicator() {
-        return ManeuverIndicator.from((Decoders.toUnsignedInteger(getMessagePayload().substring(143, 145))));
+    private ManeuverIndicator decodeManeuverIndicator() {
+        return ManeuverIndicator.from((Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(143, 145))));
     }
 
     /**
      *
      * @return False not in use (default) <br> True in use
      */
-    public boolean decodeRaimFlag() {
-        return Decoders.toBoolean(getMessagePayload().substring(148, 149));
+    private boolean decodeRaimFlag() {
+        return Decoders.toBoolean(getBinaryMessagePayload().substring(148, 149));
     }
 
     /**
      *
      * @return Diagnostic information for the radio system.
      */
-    public ICommunicationState decodeRadioStatus() {
-        SyncState syncState = SyncState.from(Decoders.toUnsignedInteger(getMessagePayload().substring(149, 151)));
-        if (this.decodeMessageType() == MessageType.PositionReportClassA || this.decodeMessageType() == MessageType.PositionReportClassAAssignedSchedule) {
+    private ICommunicationState decodeRadioStatus() {
+        SyncState syncState = SyncState.from(Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(149, 151)));
+        if (this.getMessageType() == MessageType.PositionReportClassA || this.getMessageType() == MessageType.PositionReportClassAAssignedSchedule) {
             // SOTDMA communication state 1 SOTDMA communication state as described in ß 3.3.7.2.2
-            return new SOTDMACommunicationState(syncState, Decoders.toUnsignedInteger(getMessagePayload().substring(151, 154)),
-                    getMessagePayload().substring(154, 168));
+            return new SOTDMACommunicationState(syncState, Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(151, 154)),
+                    getBinaryMessagePayload().substring(154, 168));
         } else {
             // ITDMA communication state
-            return new ITDMACommunicationState(syncState, Decoders.toUnsignedInteger(getMessagePayload().substring(151, 164)),
-                    Decoders.toUnsignedInteger(getMessagePayload().substring(164, 167)),
-                    Decoders.toBoolean(getMessagePayload().substring(167, 168)));
+            return new ITDMACommunicationState(syncState, Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(151, 164)),
+                    Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(164, 167)),
+                    Decoders.toBoolean(getBinaryMessagePayload().substring(167, 168)));
         }
     }
 }

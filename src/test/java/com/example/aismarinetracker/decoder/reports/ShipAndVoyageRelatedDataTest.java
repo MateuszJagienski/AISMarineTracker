@@ -25,28 +25,28 @@ class ShipAndVoyageRelatedDataTest {
     @Test
     @DisplayName("Test message length")
     void getMessageLength() {
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 426;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getMessagePayload().length());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getBinaryMessagePayload().length());
         }
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 426;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getMessagePayload().length());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getBinaryMessagePayload().length());
         }
     }
     @Test
     void getAisVersion() {
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 1;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getAisVersion());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getAisVersion());
         }
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 1;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getAisVersion());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getAisVersion());
         }
     }
 
@@ -54,9 +54,9 @@ class ShipAndVoyageRelatedDataTest {
     void getImoNumber() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 0;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getImoNumber());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getImoNumber());
         }
     }
 
@@ -64,9 +64,9 @@ class ShipAndVoyageRelatedDataTest {
     void getCallSign() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = "J050A";
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getCallSign());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getCallSign());
         }
     }
 
@@ -74,9 +74,9 @@ class ShipAndVoyageRelatedDataTest {
     void getVesselName() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = "HHLA 3 B";
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getVesselName());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getVesselName());
         }
     }
 
@@ -84,9 +84,9 @@ class ShipAndVoyageRelatedDataTest {
     void getShipType() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = ShipType.LawEnforcement;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getShipType());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getShipType());
         }
     }
 
@@ -94,9 +94,9 @@ class ShipAndVoyageRelatedDataTest {
     void getDimensionToBow() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 12;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getDimensionToBow());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getDimensionToBow());
         }
     }
 
@@ -104,9 +104,9 @@ class ShipAndVoyageRelatedDataTest {
     void getDimensionToStern() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 38;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getDimensionToStern());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getDimensionToStern());
         }
     }
 
@@ -114,9 +114,9 @@ class ShipAndVoyageRelatedDataTest {
     void getDimensionToPort() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 23;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getDimensionToPort());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getDimensionToPort());
         }
     }
 
@@ -124,9 +124,9 @@ class ShipAndVoyageRelatedDataTest {
     void getDimensionToStarboard() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 2;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getDimensionToStarboard());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getDimensionToStarboard());
         }
     }
 
@@ -134,9 +134,9 @@ class ShipAndVoyageRelatedDataTest {
     void getTypeOfEPFD() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = EPFD.Undefined;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getTypeOfEPFD());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getTypeOfEPFD());
         }
     }
 
@@ -144,9 +144,9 @@ class ShipAndVoyageRelatedDataTest {
     void getMonth() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 5;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getMonth());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getMonth());
         }
     }
 
@@ -154,9 +154,9 @@ class ShipAndVoyageRelatedDataTest {
     void getDay() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 14;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getDay());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getDay());
         }
     }
 
@@ -164,9 +164,9 @@ class ShipAndVoyageRelatedDataTest {
     void getHour() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 20;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getHour());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getHour());
         }
     }
 
@@ -174,9 +174,9 @@ class ShipAndVoyageRelatedDataTest {
     void getMinute() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 10;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getMinute());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getMinute());
         }
     }
 
@@ -184,9 +184,9 @@ class ShipAndVoyageRelatedDataTest {
     void getDraught() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 0;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getDraught());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getDraught());
         }
     }
 
@@ -194,9 +194,9 @@ class ShipAndVoyageRelatedDataTest {
     void getDestination() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = "";
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).getDestination());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getDestination());
         }
     }
 
@@ -204,9 +204,9 @@ class ShipAndVoyageRelatedDataTest {
     void isDTE() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
-        if (aisMessage instanceof ShipAndVoyageRelatedData) {
+        if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = false;
-            assertEquals(expected, ((ShipAndVoyageRelatedData) aisMessage).isDte());
+            assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).isDte());
         }
     }
 }
