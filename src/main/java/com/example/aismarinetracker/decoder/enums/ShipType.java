@@ -1,5 +1,6 @@
 package com.example.aismarinetracker.decoder.enums;
 
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -68,6 +69,16 @@ public enum ShipType {
     OtherTypeNoAdditionalInformation(99),
     // 100-199 Reserved for future use treat as 0
     ;
+    public enum SimplifiedShipType {
+        Fishing,
+        PleasureCraft,
+        HighSpeedCraft,
+        Tug,
+        Passenger,
+        Cargo,
+        Tanker,
+        OtherType;
+    }
     private final int code;
     private static final Map<Integer, ShipType> map = Stream.of(values()).
             collect(Collectors.toMap(ShipType::getCode, e -> e));
@@ -82,4 +93,17 @@ public enum ShipType {
                                         // unless the controlled vocabulary is extended to include the unknown values.
         return map.get(integer) == null ? NotAvailable : map.get(integer);
     }
+
+    public static SimplifiedShipType from(ShipType shipType) {
+        var code = shipType.getCode();
+        if (code == 37) return SimplifiedShipType.PleasureCraft;
+        if (code == 30) return SimplifiedShipType.Fishing;
+        if (code == 52) return SimplifiedShipType.Tug;
+        if (code >= 60 && code <= 69) return SimplifiedShipType.Passenger;
+        if (code >= 70 && code <= 79) return SimplifiedShipType.Cargo;
+        if (code >= 80 && code <= 89) return SimplifiedShipType.Tanker;
+        if (code >= 40 && code <= 49) return SimplifiedShipType.HighSpeedCraft;
+        return SimplifiedShipType.OtherType;
+    }
+
 }
