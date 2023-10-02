@@ -11,7 +11,7 @@ public enum MessageType {
     PositionReportClassAAssignedSchedule(2),
     PositionReportClassAResponseToInterrogation(3),
     BaseStationReport(4),
-    ShipAndVoyageRelatedData(5),
+    StaticAndVoyageRelatedData(5),
     BinaryAddressedMessage(6),
     BinaryAcknowledge(7),
     BinaryBroadcastMessage(8),
@@ -31,7 +31,7 @@ public enum MessageType {
     ChannelManagement(22),
     GroupAssignmentCommand(23),
     StaticDataReport(24),
-    SingleSlotBinaryMesssage(25),
+    SingleSlotBinaryMessage(25),
     MultipleSlotBinaryMessageWithCommunicationsState(26),
     PositionReportForLongRangeApplications(27),
     Error(-1);
