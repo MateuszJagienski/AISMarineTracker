@@ -1,5 +1,6 @@
 /*ship icons*/
 
+/*top -13px; left -13px; wourkaround to set proper anchor for icon*/
 /*passenger*/
 .vessel-icon-passenger-0 {
     background-position: 0px 0px;
@@ -8,6 +9,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    top: -13px;
+    left: -13px;
+    position: relative;
 }
 
 .vessel-icon-passenger-1 {
@@ -17,6 +22,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    top: -13px;
+    left: -13px;
+    position: relative;
 }
 
 /*cargo*/
@@ -27,6 +36,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    top: -13px;
+    left: -13px;
+    position: relative;
 }
 
 .vessel-icon-cargo-1 {
@@ -36,6 +49,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    top: -13px;
+    left: -13px;
+    position: relative;
 }
 
 /*tanker*/
@@ -46,6 +63,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    top: -13px;
+    left: -13px;
+    position: relative;
 }
 
 .vessel-icon-tanker-1 {
@@ -55,6 +76,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    top: -13px;
+    left: -13px;
+    position: relative;
 }
 
 /*hsc*/
@@ -65,6 +90,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    top: -13px;
+    left: -13px;
+    position: relative;
 }
 
 .vessel-icon-hsc-1 {
@@ -74,6 +103,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    top: -13px;
+    left: -13px;
+    position: relative;
 }
 
 /*tugspecialcraft*/
@@ -84,6 +117,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    top: -13px;
+    left: -13px;
+    position: relative;
 }
 
 .vessel-icon-tugspecialcraft-1 {
@@ -93,6 +130,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    top: -13px;
+    left: -13px;
+    position: relative;
 }
 
 /*pleasure*/
@@ -103,6 +144,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    top: -13px;
+    left: -13px;
+    position: relative;
 }
 
 .vessel-icon-pleasure-1 {
@@ -112,6 +157,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    top: -13px;
+    left: -13px;
+    position: relative;
 }
 
 /*fishing*/
@@ -122,6 +171,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    top: -13px;
+    left: -13px;
+    position: relative;
 }
 
 .vessel-icon-fishing-1 {
@@ -131,6 +184,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    top: -13px;
+    left: -13px;
+    position: relative;
 }
 
 /*other*/
@@ -141,6 +198,10 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    position: relative;
+    top: -13px;
+    left: -13px;
 }
 
 .vessel-icon-other-1 {
@@ -150,4 +211,8 @@
     display: block;
     background-image: url('../img/transparentShipIcons.png');
     background-repeat: no-repeat;
+    transform-origin: center center;
+    position: relative;
+    top: -13px;
+    left: -13px;
 }
