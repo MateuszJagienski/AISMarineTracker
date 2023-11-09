@@ -17,18 +17,14 @@ public class RotatedLMarker extends LMarker {
     private Integer MMSI;
 
 
-    public RotatedLMarker(ShipType shipType, int angle, double lat, double lon, float speed) {
-        super(lat, lon, String.valueOf(UUID.randomUUID()));
+    public RotatedLMarker(ShipData shipData) {
+        super(shipData.getLatitude(), shipData.getLongitude(), String.valueOf(UUID.randomUUID()));
         uniqueTag = super.getTag();
-        super.setDivIcon(createRotatedIcon(shipType, angle, speed));
+        super.setDivIcon(createRotatedIcon(shipData));
     }
 
-    private LDivIcon createRotatedIcon(ShipType shipType, int angle, float speed) {
-        System.out.println("siptype: " + shipType);
-        if (shipType == null) {
-            shipType = ShipType.NotAvailable;
-        }
-        var simplifiedShipType = ShipType.from(shipType);
+    private LDivIcon createRotatedIcon(ShipData shipData) {
+        var simplifiedShipType = ShipType.from(shipData.getShipType());
         StringBuilder ship = new StringBuilder(switch (simplifiedShipType) {
             case Fishing -> "fishing-";
             case PleasureCraft -> "pleasure-";
@@ -39,15 +35,16 @@ public class RotatedLMarker extends LMarker {
             case Tanker -> "tanker-";
             default -> "other-";
         });
-        if (speed < 0.2f) ship.append("1");
+        if (shipData.getSpeedOverGround() < 0.2f) ship.append("1");
         else ship.append("0");
-
+        int angle = (int) shipData.getCourseOverGround();
         String cssClass = "vessel-icon-%s".formatted(ship);
         String html = """
                 <div class=%s style="transform: rotate(%ddeg);">
                 </div>
                 """.formatted(cssClass, angle);
         lDivIcon = new LDivIcon(html);
+        System.out.println("Classname: " + lDivIcon.getClassName());
         lDivIcon.setClassName("");
         return lDivIcon;
     }

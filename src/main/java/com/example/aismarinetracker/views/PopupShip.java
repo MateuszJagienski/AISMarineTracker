@@ -1,67 +1,54 @@
 package com.example.aismarinetracker.views;
 
 
-import com.example.aismarinetracker.decoder.AisHandler;
 import com.example.aismarinetracker.decoder.enums.ShipType;
+import com.example.aismarinetracker.decoder.reports.AisMessage;
+import com.example.aismarinetracker.decoder.reports.PositionReport;
 import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.dom.Style;
-import com.vaadin.flow.theme.Theme;
+import software.xdev.vaadin.maps.leaflet.flow.data.LPoint;
+import software.xdev.vaadin.maps.leaflet.flow.data.LPolyline;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PopupShip extends VerticalLayout {
     private ShipData shipData;
     public PopupShip() {
         super();
-        AisHandler aisHandler = new AisHandler();
-
-        shipData = new ShipData(List.of(aisHandler.handleAisMessage("!AIVDM,1,1,,A,13q5BjhP00Q1IFHNlMJP0?v824H0,0*1D")));
-        createOverlayView();
-        closeOverlay();
-
+        var vlStyle = this.getStyle();
+        vlStyle.set("z-index", "2");
+        vlStyle.set("width", "320px");
+        vlStyle.set("right", "0px");
+        vlStyle.setPosition(Style.Position.FIXED);
+        this.setSpacing(false);
+        this.setPadding(false);
     }
 
     public void showOverlay(ShipData shipData) {
-        this.setVisible(true);
-        setData(shipData);
+        closeOverlay();
+        this.shipData = shipData;
+        this.add(createOverlayView());
     }
 
     public void closeOverlay() {
-        this.setVisible(false);
+        this.removeAll();
     }
 
-    private void setData(ShipData shipData) {
-
-    }
-
-    public void createOverlayView() {
-        // outside element for closing
-        // overlay hl with shipData
-        // shipData: name, image, speed, course, type, drought, destination, eta, navigation status
-        var vlStyle = this.getStyle();
-
-
-        vlStyle.set("z-index", "2");
-        vlStyle.setWidth("320px");
-        vlStyle.setRight("0");
-        vlStyle.setPosition(Style.Position.FIXED);
-        vlStyle.setHeight("100%");
+    public VerticalLayout createOverlayView() {
+        var vl = new VerticalLayout();
+        var vlStyle = vl.getStyle();
         vlStyle.set("background-color", "rgba(0,0,0,0.8)");
-        //this.setWidthFull();
-        this.setSpacing(false);
-        this.setPadding(false);
-        //this.setAlignItems(FlexComponent.Alignment.CENTER);
+        vl.setSpacing(false);
+        vl.setPadding(false);
 
         // hl background image
         var hl = new HorizontalLayout();
@@ -72,7 +59,7 @@ public class PopupShip extends VerticalLayout {
         var vlName = new VerticalLayout();
         vlName.setPadding(false);
         vlName.setSpacing(false);
-        var shipName = "<div><strong>Ship type:</strong>" + shipData.getVesselName() + "</div>";
+        var shipName = "<div><strong>Ship name:</strong>" + shipData.getVesselName() + "</div>";
         var name = new Html(shipName);
         name.setId("ship_name");
         if (shipData.getShipType() == null) {
@@ -95,7 +82,7 @@ public class PopupShip extends VerticalLayout {
         closeButton.getStyle().setMargin("auto");
         closeButton.getStyle().set("margin-right", "10px");
         closeButton.addClickListener(event -> {
-            this.setVisible(false);
+            closeOverlay();
         });
         hl.add(closeButton);
 
@@ -103,26 +90,57 @@ public class PopupShip extends VerticalLayout {
         shipImage.setHeight(225, Unit.PIXELS);
         shipImage.setWidth(320, Unit.PIXELS);
 
-        this.add(hl, shipImage);
-
-        var navigationStatus = "<div><strong>Navigation status:</strong>" + shipData.getNavigationStatus() + "</div>";
+        var navigationStatus = "<div><strong>Navigation status: </strong>" + shipData.getNavigationStatus() + "</div>";
         var status = new Html(navigationStatus);
         status.setId("overlay_text");
-        this.add(status);
 
-        var speedOverGround = "<div><strong>Speed over ground:</strong>" + shipData.getSpeedOverGround() + "</div>";
+        var speedOverGround = "<div><strong>Speed over ground: </strong>" + shipData.getSpeedOverGround() + " knots</div>";
         var speed = new Html(speedOverGround);
         speed.setId("overlay_text");
-        this.add(speed);
 
-        var courseOverGround = "<div><strong>Course over ground:</strong>" + shipData.getCourseOverGround() + "</div>";
+        var courseOverGround = "<div><strong>Course over ground: </strong>" + shipData.getCourseOverGround() + "</div>";
         var course = new Html(courseOverGround);
         course.setId("overlay_text");
-        this.add(course);
 
-        var heading = "<div><strong>Heading:</strong>" + shipData.getHeading() + "</div>";
+        var heading = "<div><strong>Heading: </strong>" + shipData.getTrueHeading() + "</div>";
         var shipHeading = new Html(heading);
         shipHeading.setId("overlay_text");
-        this.add(shipHeading);
+
+        var latitude = "<div><strong>Latitude: </strong>" + shipData.getLatitude() + "</div>";
+        var shipLatitude = new Html(latitude);
+        shipLatitude.setId("overlay_text");
+
+        var longitude = "<div><strong>Longitude: </strong>" + shipData.getLongitude() + "</div>";
+        var shipLongitude = new Html(longitude);
+        shipLongitude.setId("overlay_text");
+
+        var trackButton = new Button("Track");
+        var trackIcon = new Icon(VaadinIcon.ANCHOR);
+        trackButton.setIcon(trackIcon);
+        trackButton.addClickListener(event -> {
+            drawLine(shipData);
+        });
+
+        vl.add(hl, shipImage, status, speed, course, shipHeading, shipLatitude, shipLongitude, trackButton);
+        return vl;
+    }
+
+    private void drawLine(ShipData shipData) {
+//        var points = new ArrayList<LPoint>();
+//        var currentReport = MapView.getCurrentReports();
+//        var mmsi = shipData.getMmsi();
+//        for (int i = 0; i < currentReport; i++) {
+//            var reports = reportsContainers.get(i);
+//            var report = reports.getReports().get(mmsi);
+//            if (report == null) continue;
+//            report.forEach(e -> {
+//                if (e instanceof PositionReport r) {
+//                    points.add(new LPoint(r.getLatitude(), r.getLongitude()));
+//                }
+//            });
+//        }
+//        var polyline = new LPolyline(points);
+//        polyline.setNoClip(true);
+//        this.map.addLComponents(polyline);
     }
 }
