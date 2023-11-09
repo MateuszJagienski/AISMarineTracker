@@ -6,7 +6,7 @@ import com.example.aismarinetracker.decoder.enums.ShipType;
 import lombok.Getter;
 
 @Getter
-public class ExtendedClassBEquipmentPositionReport extends AisMessage {
+public class ExtendedClassBEquipmentPositionReport extends AisMessage implements IDynamicPositionReport {
 
     private int regionalReserved;
     private int regionalReserved1;

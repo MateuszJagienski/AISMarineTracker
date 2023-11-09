@@ -7,7 +7,7 @@ import com.example.aismarinetracker.decoder.enums.SyncState;
 import lombok.Getter;
 
 @Getter
-public class BaseStationReport extends AisMessage {
+public class BaseStationReport extends AisMessage implements IPositionReport {
 
     private int year;
     private int month;

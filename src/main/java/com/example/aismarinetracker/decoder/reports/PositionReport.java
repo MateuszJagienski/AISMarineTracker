@@ -8,7 +8,7 @@ import com.example.aismarinetracker.decoder.enums.SyncState;
 import lombok.Getter;
 
 @Getter
-public class PositionReport extends AisMessage {
+public class PositionReport extends AisMessage implements IDynamicPositionReport {
 
     private NavigationStatus navigationStatus;
     private int rateOfTurn;

@@ -7,7 +7,7 @@ import com.example.aismarinetracker.decoder.enums.ShipType;
 import lombok.Getter;
 
 @Getter
-public class StaticAndVoyageRelatedData extends AisMessage {
+public class StaticAndVoyageRelatedData extends AisMessage implements IHasDimensions {
 
     private int aisVersion;
     private int imoNumber;

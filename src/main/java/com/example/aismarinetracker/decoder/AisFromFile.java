@@ -1,6 +1,7 @@
 package com.example.aismarinetracker.decoder;
 
 
+import com.example.aismarinetracker.decoder.enums.MessageType;
 import com.example.aismarinetracker.decoder.reports.AisMessage;
 import com.example.aismarinetracker.decoder.reports.AisMessageFactory;
 import com.example.aismarinetracker.decoder.reports.BaseStationReport;
@@ -66,6 +67,71 @@ public class AisFromFile {
         return reports;
     }
 
+    public List<AisMessage> read() throws FileNotFoundException {
+        var file = new File(AIS_FILE_PATH);
+        var scanner = new Scanner(file);
+        var aisHandler = new AisHandler();
+        var messages = new ArrayList<AisMessage>();
+
+        if (!scanner.nextLine().trim().equals("OK")) {
+            scanner = new Scanner(cleanAisFile(file, scanner));
+        }
+
+        while (scanner.hasNextLine()) {
+            var line = scanner.nextLine();
+            // if line has 2 in second field concatante with next line
+            try {
+                AisMessage aisMessage;
+                if (line.split(",")[1].equals("2")) {
+                    var nextLine = scanner.nextLine();
+                    aisMessage = aisHandler.handleAisMessage(line, nextLine);
+                } else {
+                    aisMessage = aisHandler.handleAisMessage(line);
+                }
+                if (aisMessage != null) {
+                    messages.add(aisMessage);
+                }
+
+            } catch (RuntimeException e ) {
+                //e.printStackTrace();
+            }
+        }
+        return messages;
+    }
+
+    public List<AisMessage> read(MessageType messageType) throws FileNotFoundException {
+        var file = new File(AIS_FILE_PATH);
+        var scanner = new Scanner(file);
+        var aisHandler = new AisHandler();
+        var messages = new ArrayList<AisMessage>();
+
+        if (!scanner.nextLine().trim().equals("OK")) {
+            scanner = new Scanner(cleanAisFile(file, scanner));
+        }
+
+        while (scanner.hasNextLine()) {
+            var line = scanner.nextLine();
+            // if line has 2 in second field concatante with next line
+            try {
+                AisMessage aisMessage;
+                if (line.split(",")[1].equals("2")) {
+                    var nextLine = scanner.nextLine();
+                    aisMessage = aisHandler.handleAisMessage(line, nextLine);
+                } else {
+                    aisMessage = aisHandler.handleAisMessage(line);
+                }
+                if (aisMessage != null) {
+                    if (aisMessage.getMessageType().equals(messageType)) {
+                        messages.add(aisMessage);
+                    }
+                }
+
+            } catch (RuntimeException e ) {
+                //e.printStackTrace();
+            }
+        }
+        return messages;
+    }
 
     private static Map<Integer, List<AisMessage>> deepCopy(Map<Integer, List<AisMessage>> original) {
         Map<Integer, List<AisMessage>> copy = new HashMap<>();

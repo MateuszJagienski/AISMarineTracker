@@ -6,7 +6,7 @@ import com.example.aismarinetracker.decoder.enums.SyncState;
 import lombok.Getter;
 
 @Getter
-public class StandardClassBCSPositionReport extends AisMessage {
+public class StandardClassBCSPositionReport extends AisMessage implements IDynamicPositionReport {
 
     private float speedOverGround;
     private boolean positionAccurate;
