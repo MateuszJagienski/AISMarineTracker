@@ -34,7 +34,7 @@ public class ExtendedClassBEquipmentPositionReport extends AisMessage implements
         decode();
     }
 
-    public void decode() {
+    private void decode() {
         regionalReserved = decodeRegionalReserved();
         regionalReserved1 = decodeRegionalReserved1();
         speedOverGround = decodeSpeedOverGround();
@@ -56,15 +56,15 @@ public class ExtendedClassBEquipmentPositionReport extends AisMessage implements
         assignedModeFlag = decodeAssignedModeFlag();
     }
 
-    public int decodeRegionalReserved() {
+    private int decodeRegionalReserved() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(38, 46));
     }
 
-    public int decodeRegionalReserved1() {
+    private int decodeRegionalReserved1() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(139, 143));
     }
 
-    public float decodeSpeedOverGround() {
+    private float decodeSpeedOverGround() {
         return Decoders.toUnsignedFloat(getBinaryMessagePayload().substring(46, 56)) / 10f;
     }
 
@@ -72,64 +72,64 @@ public class ExtendedClassBEquipmentPositionReport extends AisMessage implements
         return Decoders.toBoolean(getBinaryMessagePayload().substring(56, 57));
     }
 
-    public float decodeLongitude() {
+    private float decodeLongitude() {
         var longitude = Decoders.toFloat(getBinaryMessagePayload().substring(57, 85));
         return longitude / 600000f;
     }
 
-    public float decodeLatitude() {
+    private float decodeLatitude() {
         var latitude = Decoders.toFloat(getBinaryMessagePayload().substring(85, 112));
         return latitude / 600000f;
     }
 
-    public float decodeCourseOverGround() {
+    private float decodeCourseOverGround() {
         return Decoders.toUnsignedFloat(getBinaryMessagePayload().substring(112, 124)) / 10f;
     }
 
-    public int decodeTrueHeading() {
+    private int decodeTrueHeading() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(124, 133));
     }
-    public int decodeTimeStamp() {
+    private int decodeTimeStamp() {
         return Decoders.toInteger(getBinaryMessagePayload().substring(133, 139));
     }
 
-    public String decodeName() {
+    private String decodeName() {
         return Decoders.toAsciiString(getBinaryMessagePayload().substring(143, 263));
     }
 
-    public ShipType decodeShipType() {
+    private ShipType decodeShipType() {
         return ShipType.from(Decoders.toInteger(getBinaryMessagePayload().substring(263, 271)));
     }
 
-    public int decodeDimensionToBow() {
+    private int decodeDimensionToBow() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(271, 280));
     }
 
-    public int decodeDimensionToStern() {
+    private int decodeDimensionToStern() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(280, 289));
     }
 
-    public int decodeDimensionToPort() {
+    private int decodeDimensionToPort() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(289, 295));
     }
 
-    public int decodeDimensionToStarboard() {
+    private int decodeDimensionToStarboard() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(295, 301));
     }
 
-    public EPFD decodeTypeOfEPFD() {
+    private EPFD decodeTypeOfEPFD() {
         return EPFD.from(Decoders.toInteger(getBinaryMessagePayload().substring(301, 305)));
     }
 
-    public boolean decodeRaimFlag() {
+    private boolean decodeRaimFlag() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(305, 306));
     }
 
-    public boolean decodeDataTerminalReady() {
+    private boolean decodeDataTerminalReady() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(306, 307));
     }
 
-    public boolean decodeAssignedModeFlag() {
+    private boolean decodeAssignedModeFlag() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(307, 308));
     }
 }

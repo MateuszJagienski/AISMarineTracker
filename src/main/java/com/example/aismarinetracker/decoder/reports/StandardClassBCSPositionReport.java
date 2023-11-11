@@ -29,7 +29,7 @@ public class StandardClassBCSPositionReport extends AisMessage implements IDynam
         decode();
     }
 
-    public void decode() {
+    private void decode() {
         this.speedOverGround = decodeSpeedOverGround();
         this.positionAccurate = decodePositionAccurate();
         this.longitude = decodeLongitude();
@@ -47,65 +47,65 @@ public class StandardClassBCSPositionReport extends AisMessage implements IDynam
         this.radioStatus = decodeRadioStatus();
     }
 
-    public float decodeSpeedOverGround() {
+    private float decodeSpeedOverGround() {
         return Decoders.toUnsignedFloat(getBinaryMessagePayload().substring(46, 56)) / 10;
     }
 
-    public boolean decodePositionAccurate() {
+    private boolean decodePositionAccurate() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(56, 57));
     }
 
-    public float decodeLongitude() {
+    private float decodeLongitude() {
         var longitude = Decoders.toFloat(getBinaryMessagePayload().substring(57, 85));
         return longitude / 600000f;
     }
 
-    public float decodeLatitude() {
+    private float decodeLatitude() {
         var latitude = Decoders.toFloat(getBinaryMessagePayload().substring(85, 112));
         return latitude / 600000f;
     }
 
-    public float decodeCourseOverGround() {
+    private float decodeCourseOverGround() {
         return Decoders.toUnsignedFloat(getBinaryMessagePayload().substring(112, 124)) / 10f;
     }
 
-    public int decodeTrueHeading() {
+    private int decodeTrueHeading() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(124, 133));
     }
 
-    public int decodeTimeStamp() {
+    private int decodeTimeStamp() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(133, 139));
     }
 
-    public boolean decodeCsUnit() {
+    private boolean decodeCsUnit() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(141, 142));
     }
 
-    public boolean decodeDisplay() {
+    private boolean decodeDisplay() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(142, 143));
     }
 
-    public boolean decodeDsc() {
+    private boolean decodeDsc() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(143, 144));
     }
 
-    public boolean decodeBand() {
+    private boolean decodeBand() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(144, 145));
     }
 
-    public boolean decodeMessage22() {
+    private boolean decodeMessage22() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(145, 146));
     }
 
-    public boolean decodeAssigned() {
+    private boolean decodeAssigned() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(146, 147));
     }
 
-    public boolean decodeRaimFlag() {
+    private boolean decodeRaimFlag() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(147, 148));
     }
 
-    public ICommunicationState decodeRadioStatus() {
+    private ICommunicationState decodeRadioStatus() {
         var selectorFlag = Decoders.toBoolean(getBinaryMessagePayload().substring(148, 149));
         SyncState syncState = SyncState.from(Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(149, 151)));
         if (selectorFlag) {

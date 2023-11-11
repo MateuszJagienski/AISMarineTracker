@@ -53,71 +53,71 @@ public class StaticAndVoyageRelatedData extends AisMessage implements IHasDimens
         this.dte = decodeDte();
     }
 
-    public int decodeAisVersion() {
+    private int decodeAisVersion() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(38, 40));
     }
 
-    public int decodeImoNumber() {
+    private int decodeImoNumber() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(40, 70));
     }
 
-    public String decodeCallSign() {
+    private String decodeCallSign() {
         return Decoders.toAsciiString(getBinaryMessagePayload().substring(70, 112));
     }
 
-    public String decodeVesselName() {
+    private String decodeVesselName() {
         return Decoders.toAsciiString(getBinaryMessagePayload().substring(112, 232));
     }
 
-    public ShipType decodeShipType() {
+    private ShipType decodeShipType() {
         return ShipType.from(Decoders.toInteger(getBinaryMessagePayload().substring(232, 240)));
     }
 
-    public int decodeDimensionToBow() {
+    private int decodeDimensionToBow() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(240, 249));
     }
 
-    public int decodeDimensionToStern() {
+    private int decodeDimensionToStern() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(249, 258));
     }
 
-    public int decodeDimensionToPort() {
+    private int decodeDimensionToPort() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(258, 264));
     }
 
-    public int decodeDimensionToStarboard() {
+    private int decodeDimensionToStarboard() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(264, 270));
     }
 
-    public EPFD decodeTypeOfEPFD() {
+    private EPFD decodeTypeOfEPFD() {
         return EPFD.from(Decoders.toInteger(getBinaryMessagePayload().substring(270, 274)));
     }
 
-    public int decodeMonth() {
+    private int decodeMonth() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(274, 278));
     }
 
-    public int decodeDay() {
+    private int decodeDay() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(278, 283));
     }
 
-    public int decodeHour() {
+    private int decodeHour() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(283, 288));
     }
 
-    public int decodeMinute() {
+    private int decodeMinute() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(288, 294));
     }
 
-    public float decodeDraught() {
+    private float decodeDraught() {
         return Decoders.toUnsignedFloat(getBinaryMessagePayload().substring(294, 302)) / 10f;
     }
 
-    public String decodeDestination() {
+    private String decodeDestination() {
         return Decoders.toAsciiString(getBinaryMessagePayload().substring(302, 422));
     }
 
-    public boolean decodeDte() {
+    private boolean decodeDte() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(422, 423));
     }
 }

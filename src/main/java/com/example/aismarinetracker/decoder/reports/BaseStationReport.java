@@ -41,53 +41,53 @@ public class BaseStationReport extends AisMessage implements IPositionReport {
         this.SOTDMAState = decodeSOTDMAState();
     }
 
-    public int decodeYear() {
+    private int decodeYear() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(38, 52)); // todo dlaczego tak duzo bitow?
     }
 
-    public int decodeMonth() {
+    private int decodeMonth() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(52, 56));
     }
 
-    public int decodeDay() {
+    private int decodeDay() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(56, 61));
     }
 
-    public int decodeHour() {
+    private int decodeHour() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(61, 66));
     }
 
-    public int decodeMinute() {
+    private int decodeMinute() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(66, 72));
     }
 
-    public int decodeSecond() {
+    private int decodeSecond() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(72, 78));
     }
 
-    public boolean decodeFixQuality() {
+    private boolean decodeFixQuality() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(78, 79));
     }
 
-    public float decodeLongitude() {
+    private float decodeLongitude() {
         var longitude = Decoders.toFloat(getBinaryMessagePayload().substring(79, 107));
         return longitude / 600000f;
     }
 
-    public float decodeLatitude() {
+    private float decodeLatitude() {
         var latitude = Decoders.toFloat(getBinaryMessagePayload().substring(107, 134));
         return latitude / 600000f;
     }
 
-    public EPFD decodeTypeOfEPFD() {
+    private EPFD decodeTypeOfEPFD() {
         return EPFD.from(Decoders.toInteger(getBinaryMessagePayload().substring(134, 138)));
     }
 
-    public boolean decodeRaimFlag() {
+    private boolean decodeRaimFlag() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(148, 149));
     }
 
-    public ICommunicationState decodeSOTDMAState() {
+    private ICommunicationState decodeSOTDMAState() {
         SyncState syncState = SyncState.from(Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(149, 151)));
         return new SOTDMACommunicationState(syncState, Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(151, 154)),
                 getBinaryMessagePayload().substring(154, 168));

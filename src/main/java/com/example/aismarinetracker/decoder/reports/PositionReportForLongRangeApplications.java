@@ -22,7 +22,7 @@ public class PositionReportForLongRangeApplications extends AisMessage {
         decode();
     }
 
-    public void decode() {
+    private void decode() {
         this.positionAccuracy = decodePositionAccuracy();
         this.raimFlag = decodeRaimFlag();
         this.navigationStatus = decodeNavigationStatus();
@@ -33,35 +33,35 @@ public class PositionReportForLongRangeApplications extends AisMessage {
         this.GNSSPositionStatus = decodeGNSSPositionStatus();
     }
 
-    public boolean decodePositionAccuracy() {
+    private boolean decodePositionAccuracy() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(38, 39));
     }
 
-    public boolean decodeRaimFlag() {
+    private boolean decodeRaimFlag() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(39, 40));
     }
 
-    public NavigationStatus decodeNavigationStatus() {
+    private NavigationStatus decodeNavigationStatus() {
         return NavigationStatus.from(Decoders.toInteger(getBinaryMessagePayload().substring(40, 44)));
     }
     // todo check longitude and latitude
-    public float decodeLongitude() {
+    private float decodeLongitude() {
         return Decoders.toFloat(getBinaryMessagePayload().substring(44, 62));
     }
 
-    public float decodeLatitude() {
+    private float decodeLatitude() {
         return Decoders.toFloat(getBinaryMessagePayload().substring(62, 79));
     }
 
-    public int decodeCourseOverGround() {
+    private int decodeCourseOverGround() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(85, 94));
     }
 
-    public float decodeSpeedOverGround() {
+    private float decodeSpeedOverGround() {
         return Decoders.toUnsignedInteger(getBinaryMessagePayload().substring(79, 85));
     }
 
-    public boolean decodeGNSSPositionStatus() {
+    private boolean decodeGNSSPositionStatus() {
         return Decoders.toBoolean(getBinaryMessagePayload().substring(94, 95));
     }
 }
