@@ -14,6 +14,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service for reading ais messages from file
+ */
 @Service
 public class AisFromFile {
 
@@ -24,6 +27,10 @@ public class AisFromFile {
         AIS_FILE_PATH = source;
     }
 
+    /**
+     * @return list of reports containers containing map<MMSI, List<AisMessage>> and time of report
+     * @throws FileNotFoundException
+     **/
     public List<ReportsContainer> readFromFile() throws FileNotFoundException {
         var file = new File(AIS_FILE_PATH);
         var scanner = new Scanner(file);
@@ -67,6 +74,11 @@ public class AisFromFile {
         return reports;
     }
 
+    /**
+     * Reads ais messages from file and returns list of ais messages
+     * @return list of ais messages
+     * @throws FileNotFoundException
+     **/
     public List<AisMessage> read() throws FileNotFoundException {
         var file = new File(AIS_FILE_PATH);
         var scanner = new Scanner(file);
@@ -99,6 +111,12 @@ public class AisFromFile {
         return messages;
     }
 
+    /**
+     * Reads ais messages from file and returns list of ais messages by message type
+     * @param messageType
+     * @return only ais messages of given message type
+     * @throws FileNotFoundException
+     */
     public List<AisMessage> read(MessageType messageType) throws FileNotFoundException {
         var file = new File(AIS_FILE_PATH);
         var scanner = new Scanner(file);

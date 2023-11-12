@@ -15,6 +15,7 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
+import org.springframework.beans.factory.annotation.Autowired;
 import software.xdev.vaadin.maps.leaflet.flow.LMap;
 import software.xdev.vaadin.maps.leaflet.flow.data.LComponent;
 import software.xdev.vaadin.maps.leaflet.flow.data.LPoint;
@@ -39,8 +40,12 @@ public class MapView extends VerticalLayout {
     private ComboBox<File> aisDataPicker;
     private PopupShip popupShip = new PopupShip();
 
-    public MapView() {
+    private final AisFromFile aisFromFile;
 
+    @Autowired
+    public MapView(AisFromFile aisFromFile) {
+
+        this.aisFromFile = aisFromFile;
         this.map = new LMap(49.675126, 12.160733, 10);
         this.map.setTileLayer(LTileLayer.DEFAULT_OPENSTREETMAP_TILE);
         this.map.setSizeFull();
@@ -51,6 +56,9 @@ public class MapView extends VerticalLayout {
             });
         });
 
+        popupShip.addTrackButtonClickListener(e -> {
+            System.out.println("Track btn clicked!");
+        });
         data = new TextField("Data");
         data.setReadOnly(true);
         add(this.map);
@@ -94,12 +102,6 @@ public class MapView extends VerticalLayout {
         add(popupShip);
     }
 
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        super.onAttach(attachEvent);
-        System.out.println("onAttach");
-    }
-
     private void updateMap(int reportNumber) throws FileNotFoundException, InterruptedException {
         if (reportsContainers == null) {
             updateSource();
@@ -109,7 +111,7 @@ public class MapView extends VerticalLayout {
         }
         currentReports = reportsContainers.get(reportNumber).getReports();
         for (var entry : currentReports.entrySet()) {
-            if (entry.getValue().size() == 0) {
+            if (entry.getValue().isEmpty()) {
                 continue;
             }
             try {
@@ -126,7 +128,6 @@ public class MapView extends VerticalLayout {
     private void updateSource() throws FileNotFoundException, InterruptedException {
         System.out.println(aisDataPicker.getValue().toString());
         AisFromFile.updateAisFilePath(aisDataPicker.getValue().toString());
-        AisFromFile aisFromFile = new AisFromFile();
         reportsContainers = aisFromFile.readFromFile();
         updateMap(1);
     }

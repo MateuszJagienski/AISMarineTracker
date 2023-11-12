@@ -4,8 +4,7 @@ package com.example.aismarinetracker.views;
 import com.example.aismarinetracker.decoder.enums.ShipType;
 import com.example.aismarinetracker.decoder.reports.AisMessage;
 import com.example.aismarinetracker.decoder.reports.PositionReport;
-import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
@@ -14,6 +13,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Style;
+import com.vaadin.flow.shared.Registration;
 import software.xdev.vaadin.maps.leaflet.flow.data.LPoint;
 import software.xdev.vaadin.maps.leaflet.flow.data.LPolyline;
 
@@ -22,6 +22,7 @@ import java.util.List;
 
 public class PopupShip extends VerticalLayout {
     private ShipData shipData;
+
     public PopupShip() {
         super();
         var vlStyle = this.getStyle();
@@ -118,11 +119,16 @@ public class PopupShip extends VerticalLayout {
         var trackIcon = new Icon(VaadinIcon.ANCHOR);
         trackButton.setIcon(trackIcon);
         trackButton.addClickListener(event -> {
-            drawLine(shipData);
+            fireEvent(new ClickTrackEvent(this, true));
         });
 
         vl.add(hl, shipImage, status, speed, course, shipHeading, shipLatitude, shipLongitude, trackButton);
         return vl;
+    }
+
+    public Registration addTrackButtonClickListener(ComponentEventListener<ClickTrackEvent> listener) {
+        System.out.println("inside Registration");
+        return addListener(ClickTrackEvent.class, listener);
     }
 
     private void drawLine(ShipData shipData) {
