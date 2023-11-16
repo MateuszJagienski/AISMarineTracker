@@ -30,7 +30,7 @@ public class AisValidator {
     public static boolean isCheckSumValid(String message) {
         var messageParts = message.split("\\*");
         if (messageParts.length != 2) {
-            logger.info("message doesnt contain checksum");
+            logger.warning("message doesnt contain checksum");
             return false;
         }
         var checksum = messageParts[1];
@@ -41,8 +41,12 @@ public class AisValidator {
         }
 
         var calculatedChecksum = Decoders.calculateChecksum(messageWithoutChecksum);
+        calculatedChecksum = calculatedChecksum.trim();
+        checksum = checksum.trim();
+
+        logger.info("cal check : " + calculatedChecksum + " org check: " + checksum);
         if (!calculatedChecksum.equalsIgnoreCase(checksum)) {
-            logger.info("Invalid checksum expected: " + calculatedChecksum + " but was: " + checksum);
+            logger.warning("Invalid checksum expected: " + calculatedChecksum + " but was: " + checksum);
             return false;
         }
         return calculatedChecksum.equalsIgnoreCase(checksum);
