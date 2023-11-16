@@ -10,21 +10,22 @@ import org.springframework.stereotype.Service;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Service
 public class AisHandler {
 
     private static final Logger logger = Logger.getLogger(Main.class.getName());
     private final AisMessageFactory aisMessageFactory;
 
 
-    public AisHandler() {
-        logger.setLevel(Level.OFF);
-        this.aisMessageFactory = new AisMessageFactory();
+    public AisHandler(AisMessageFactory aisMessageFactory) {
+        logger.setLevel(Level.ALL);
+        this.aisMessageFactory = aisMessageFactory;
     }
 
     public AisMessage handleAisMessage(String... nmeaMessage) {
         for (String s : nmeaMessage)
             if (!AisValidator.isMessageFormatValid(s)) {
-                throw new RuntimeException("Invalid message format");
+                logger.warning("message: " + s + " is invalid");
             }
 
         RawAisMessage[] rawAisMessages = new RawAisMessage[nmeaMessage.length];

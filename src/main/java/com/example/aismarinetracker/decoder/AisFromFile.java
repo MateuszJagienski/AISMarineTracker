@@ -22,6 +22,12 @@ public class AisFromFile {
 
     private static String AIS_FILE_PATH = "src/main/resources/META-INF/resources/aisdata/00.txt";
     private final String AIS_DIR_PATH = "src/main/resources/META-INF/resources/aisdata/";
+    private final AisHandler aisHandler;
+    private Map<Integer, List<AisMessage>> associatedReports = new HashMap<>();
+
+    public AisFromFile(AisHandler aisHandler) {
+        this.aisHandler = aisHandler;
+    }
 
     public static void updateAisFilePath(String source) {
         AIS_FILE_PATH = source;
@@ -35,43 +41,46 @@ public class AisFromFile {
         var file = new File(AIS_FILE_PATH);
         var scanner = new Scanner(file);
         var reports = new ArrayList<ReportsContainer>();
-        Map<Integer, List<AisMessage>> mmsiMessages = new HashMap<>();
-        var aisHandler = new AisHandler();
-
         if (!scanner.nextLine().trim().equals("OK")) {
             scanner = new Scanner(cleanAisFile(file, scanner));
         }
-
         while (scanner.hasNextLine()) {
             var line = scanner.nextLine();
             // if line has 2 in second field concatante with next line
             try {
-                AisMessage aisMessage;
-                if (line.split(",")[1].equals("2")) {
-                    var nextLine = scanner.nextLine();
-                    aisMessage = aisHandler.handleAisMessage(line, nextLine);
-                } else {
-                    aisMessage = aisHandler.handleAisMessage(line);
-                }
-
-                mmsiMessages.computeIfPresent(aisMessage.getMMSI(), (k, v) -> {
-                     v = v.stream()
-                            .filter(x -> !x.getMessageType().equals(aisMessage.getMessageType()))
-                            .collect(Collectors.toList());
-                     v.add(aisMessage);
-                     return v;
-                });
-                mmsiMessages.computeIfAbsent(aisMessage.getMMSI(), k -> List.of(aisMessage));
-
+                AisMessage aisMessage = getMessage(line, scanner);
+                associatedReports = mapReports(aisMessage);
                 if (aisMessage instanceof BaseStationReport x) {
-                    reports.add(new ReportsContainer(new HashMap<>(mmsiMessages), LocalDateTime.of(x.getYear(), x.getMonth(), x.getDay(), x.getHour(), x.getMinute(), x.getSecond())));
-                    mmsiMessages = deepCopy(mmsiMessages);
+                    reports.add(new ReportsContainer(deepCopy(associatedReports), LocalDateTime.of(x.getYear(), x.getMonth(), x.getDay(), x.getHour(), x.getMinute(), x.getSecond())));
                 }
             } catch (RuntimeException e ) {
                 //e.printStackTrace();
             }
         }
         return reports;
+    }
+
+    private AisMessage getMessage(String line, Scanner scanner) {
+        AisMessage aisMessage;
+        if (line.split(",")[1].equals("2")) {
+            var nextLine = scanner.nextLine();
+            aisMessage = aisHandler.handleAisMessage(line, nextLine);
+        } else {
+            aisMessage = aisHandler.handleAisMessage(line);
+        }
+        return aisMessage;
+    }
+
+    private Map<Integer, List<AisMessage>> mapReports(AisMessage aisMessage) {
+        associatedReports.computeIfPresent(aisMessage.getMMSI(), (k, v) -> {
+            v = v.stream()
+                    .filter(x -> !x.getMessageType().equals(aisMessage.getMessageType()))
+                    .collect(Collectors.toList());
+            v.add(aisMessage);
+            return v;
+        });
+        associatedReports.computeIfAbsent(aisMessage.getMMSI(), k -> List.of(aisMessage));
+        return associatedReports;
     }
 
     /**
@@ -82,7 +91,6 @@ public class AisFromFile {
     public List<AisMessage> read() throws FileNotFoundException {
         var file = new File(AIS_FILE_PATH);
         var scanner = new Scanner(file);
-        var aisHandler = new AisHandler();
         var messages = new ArrayList<AisMessage>();
 
         if (!scanner.nextLine().trim().equals("OK")) {
@@ -112,7 +120,7 @@ public class AisFromFile {
     }
 
     /**
-     * Reads ais messages from file and returns list of ais messages by message type
+     * Reads AIS messages from file and returns list of ais messages by message type
      * @param messageType
      * @return only ais messages of given message type
      * @throws FileNotFoundException
@@ -120,7 +128,6 @@ public class AisFromFile {
     public List<AisMessage> read(MessageType messageType) throws FileNotFoundException {
         var file = new File(AIS_FILE_PATH);
         var scanner = new Scanner(file);
-        var aisHandler = new AisHandler();
         var messages = new ArrayList<AisMessage>();
 
         if (!scanner.nextLine().trim().equals("OK")) {
@@ -167,7 +174,7 @@ public class AisFromFile {
     private File cleanAisFile(File file, Scanner scanner) {
         var validMessages = findValidMessages(scanner);
         var newFile = new File(AIS_DIR_PATH + file.getName());
-        if (validMessages.length() > 0) {
+        if (!validMessages.isEmpty()) {
             try {
                 scanner.close();
                 file.delete();
@@ -198,31 +205,4 @@ public class AisFromFile {
         writer.close();
     }
 
-    public static void main(String[] args) throws Exception {
-        // get all txt files from AIS_FILE_PATH1
-        File folder = new File("src/main/resources/META-INF/resources/aisdata");
-        File[] listOfFiles = folder.listFiles();
-        var f = new AisFromFile();
-        if (listOfFiles == null) {
-            System.out.println("No files found");
-            return;
-        }
-        // elapsed time
-        long startTime = System.currentTimeMillis();
-        var sb = new StringBuilder();
-        for (var e : listOfFiles) {
-            sb.append(f.findValidMessages(new Scanner(e)));
-        }
-        File newFile = new File(f.AIS_DIR_PATH + "allAisData.txt");
-        f.writeToFile(newFile, sb);
-        long endTime = System.currentTimeMillis();
-        System.out.println("Elapsed time: " + (endTime - startTime) + "ms");
-
-        // elapsed time
-        startTime = System.currentTimeMillis();
-        f.readFromFile();
-        endTime = System.currentTimeMillis();
-        System.out.println("Elapsed time: " + (endTime - startTime) + "ms");
-
-    }
 }

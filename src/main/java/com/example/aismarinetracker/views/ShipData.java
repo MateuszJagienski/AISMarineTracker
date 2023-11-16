@@ -55,7 +55,8 @@ public class ShipData {
 
     private void validate() {
         if (latitude > 90 || longitude > 180) {
-            throw new RuntimeException("Invalid coordinates");
+            //throw new RuntimeException("Invalid coordinates");
+            // todo
         }
         if (shipType == null) {
             shipType = ShipType.NotAvailable;

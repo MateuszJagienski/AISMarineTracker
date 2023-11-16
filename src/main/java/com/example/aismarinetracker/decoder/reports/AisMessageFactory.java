@@ -4,7 +4,9 @@ package com.example.aismarinetracker.decoder.reports;
 import com.example.aismarinetracker.decoder.Decoders;
 import com.example.aismarinetracker.decoder.enums.MessageType;
 import com.example.aismarinetracker.decoder.exceptions.UnsupportedMessageType;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AisMessageFactory {
 
     public AisMessage createAisMessage(String messagePayload) {

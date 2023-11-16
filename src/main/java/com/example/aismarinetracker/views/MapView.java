@@ -1,13 +1,11 @@
 package com.example.aismarinetracker.views;
 
-import com.example.aismarinetracker.decoder.AisFromFile;
-import com.example.aismarinetracker.decoder.ReportsContainer;
-import com.example.aismarinetracker.decoder.enums.ShipType;
+import com.example.aismarinetracker.decoder.*;
 import com.example.aismarinetracker.decoder.reports.*;
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -18,8 +16,6 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import software.xdev.vaadin.maps.leaflet.flow.LMap;
 import software.xdev.vaadin.maps.leaflet.flow.data.LComponent;
-import software.xdev.vaadin.maps.leaflet.flow.data.LPoint;
-import software.xdev.vaadin.maps.leaflet.flow.data.LPolyline;
 import software.xdev.vaadin.maps.leaflet.flow.data.LTileLayer;
 
 import java.io.File;
@@ -39,13 +35,13 @@ public class MapView extends VerticalLayout {
     private TextField data;
     private ComboBox<File> aisDataPicker;
     private PopupShip popupShip = new PopupShip();
-
+    private final UdpListener udpListener;
     private final AisFromFile aisFromFile;
 
     @Autowired
-    public MapView(AisFromFile aisFromFile) {
-
+    public MapView(AisFromFile aisFromFile, UdpListener udpListener) {
         this.aisFromFile = aisFromFile;
+        this.udpListener = udpListener;
         this.map = new LMap(49.675126, 12.160733, 10);
         this.map.setTileLayer(LTileLayer.DEFAULT_OPENSTREETMAP_TILE);
         this.map.setSizeFull();
@@ -75,8 +71,10 @@ public class MapView extends VerticalLayout {
         numberField.setMin(1);
         numberField.setStepButtonsVisible(true);
         numberField.setStep(10);
+        var startButton = new Button();
+        startButton.setIcon(new Icon(VaadinIcon.PLAY));
 
-        hl.add(aisDataPicker, numberField, data);
+        hl.add(aisDataPicker, numberField, data, startButton);
 
         aisDataPicker.addValueChangeListener(e -> {
             try {
@@ -96,6 +94,9 @@ public class MapView extends VerticalLayout {
             } catch (InterruptedException ex) {
                 throw new RuntimeException(ex);
             }
+        });
+        startButton.addClickListener(e -> {
+            startSimulation();
         });
 
         add(hl);
@@ -126,11 +127,24 @@ public class MapView extends VerticalLayout {
     }
 
     private void updateSource() throws FileNotFoundException, InterruptedException {
-        System.out.println(aisDataPicker.getValue().toString());
         AisFromFile.updateAisFilePath(aisDataPicker.getValue().toString());
         reportsContainers = aisFromFile.readFromFile();
         updateMap(1);
     }
+
+    private void startSimulation() {
+        ReportsEvent reportsEvent = event -> {
+            System.out.println("Event received");
+        };
+        udpListener.addMessageListener(reportsEvent);
+        udpListener.startListening();
+        System.out.println("Simulation started");
+    }
+
+    private void stopSimulation() {
+        udpListener.stopListening();
+    }
+
 
     public static Map<Integer, List<AisMessage>> getCurrentReports() {
         return currentReports;
