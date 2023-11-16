@@ -7,16 +7,19 @@ import com.example.aismarinetracker.decoder.enums.ShipType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest
 class ExtendedClassBEquipmentPositionReportTest {
 
     private AisMessage aisMessage;
+    @Autowired
     private AisHandler aisHandler;
     @BeforeEach
     void setUp() {
-        aisHandler = new AisHandler();
         //aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,144ar<0wAK11`p8NjQALKqv00400,0*5D");
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,C8u:8C@t7@TnGCKfm6Po`e6N`:Va0L2J;06HV50JV?SjBPL3,0*28",
                 "!AIVDM,2,2,0,B,11RP,0*17"); // message type 19

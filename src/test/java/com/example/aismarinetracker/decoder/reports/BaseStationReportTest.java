@@ -5,16 +5,19 @@ import com.example.aismarinetracker.decoder.enums.EPFD;
 import com.example.aismarinetracker.decoder.enums.SyncState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest
 class BaseStationReportTest {
 
     private AisMessage aisMessage;
+    @Autowired
     private AisHandler aisHandler;
     @BeforeEach
     void setUp() {
-        aisHandler = new AisHandler();
         aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,402OFL1vHPP03Q1IP8NnVFo00D1P,0*62"); // message type 4
 
     }
