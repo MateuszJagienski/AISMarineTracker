@@ -1,13 +1,11 @@
 package com.example.aismarinetracker.decoder;
 
-import com.sun.tools.javac.Main;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AisValidator {
 
-    private static final Logger logger = Logger.getLogger(Main.class.getName());
+    private static final Logger logger = Logger.getLogger(AisValidator.class.getName());
 
 
     public AisValidator() {

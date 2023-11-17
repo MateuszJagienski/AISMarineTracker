@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Component
 public class MessageListenerManager {
@@ -12,6 +14,8 @@ public class MessageListenerManager {
     private final ArrayList<MessageListener> messageListeners = new ArrayList<>();
     private DatagramSocket socket;
     private Thread udpThread;
+    private static final Logger logger = Logger.getLogger(MessageListenerManager.class.getName());
+
 
     public void startListening() {
         if (udpThread != null && udpThread.isAlive()) return;
@@ -20,7 +24,7 @@ public class MessageListenerManager {
                // Creating a UDP socket on the specified port
                socket = new DatagramSocket(port);
 
-               System.out.println("Listening on port: " + socket.getLocalPort());
+               logger.info("Listening on port: " + socket.getLocalPort());
                while (!socket.isClosed()) {
                    // Buffer to receive incoming data
                    byte[] receiveData = new byte[1024];
@@ -35,13 +39,10 @@ public class MessageListenerManager {
                    String receivedMessage = new String(receivePacket.getData(), 0, receivePacket.getLength());
                    messageListeners.forEach(messageListener -> messageListener.onMessageReceived(receivedMessage));
 
-                   System.out.println("Received message: " + receivedMessage);
+                   logger.info("Received message: " + receivedMessage);
                }
            } catch (IOException e) {
-               if (!socket.isConnected())
-                   socket.close();
-           } finally {
-                socket.close();
+               logger.info("Inside: " + getClass() + "Exception in: " + e.getClass().getName());
            }
        });
        udpThread.start();

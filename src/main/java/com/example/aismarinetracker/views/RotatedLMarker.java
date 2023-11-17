@@ -44,7 +44,6 @@ public class RotatedLMarker extends LMarker {
                 </div>
                 """.formatted(cssClass, angle);
         lDivIcon = new LDivIcon(html);
-        System.out.println("Classname: " + lDivIcon.getClassName());
         lDivIcon.setClassName("");
         return lDivIcon;
     }

@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -24,6 +25,7 @@ public class AisFromFile {
     private final String AIS_DIR_PATH = "src/main/resources/META-INF/resources/aisdata/";
     private final AisHandler aisHandler;
     private Map<Integer, List<AisMessage>> associatedReports = new HashMap<>();
+    private static final Logger logger = Logger.getLogger(AisFromFile.class.getName());
 
     public AisFromFile(AisHandler aisHandler) {
         this.aisHandler = aisHandler;
@@ -54,7 +56,7 @@ public class AisFromFile {
                     reports.add(new ReportsContainer(deepCopy(associatedReports), LocalDateTime.of(x.getYear(), x.getMonth(), x.getDay(), x.getHour(), x.getMinute(), x.getSecond())));
                 }
             } catch (RuntimeException e ) {
-                //e.printStackTrace();
+                logger.info("Creating AisMessage failed " + e.getClass().getName());
             }
         }
         return reports;
@@ -108,12 +110,10 @@ public class AisFromFile {
                 } else {
                     aisMessage = aisHandler.handleAisMessage(line);
                 }
-                if (aisMessage != null) {
-                    messages.add(aisMessage);
-                }
+                messages.add(aisMessage);
 
             } catch (RuntimeException e ) {
-                //e.printStackTrace();
+                logger.info("Creating AisMessage failed  " + e.getClass().getName());
             }
         }
         return messages;
