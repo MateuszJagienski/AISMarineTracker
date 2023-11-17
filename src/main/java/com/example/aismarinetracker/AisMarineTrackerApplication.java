@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @Theme("th")
+@Push
 public class AisMarineTrackerApplication implements AppShellConfigurator {
 
     public static void main(String[] args) {

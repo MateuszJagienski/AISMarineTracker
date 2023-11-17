@@ -32,7 +32,7 @@ public class MapView extends VerticalLayout {
     private List<ReportsContainer> reportsContainers;
     private static Map<Integer, List<AisMessage>> currentReports;
     private static Map<Integer, ShipData> currentShipData = new HashMap<>();
-    private TextField data;
+    private TextField reportTime;
     private ComboBox<File> aisDataPicker;
     private PopupShip popupShip = new PopupShip();
     private final UdpListener udpListener;
@@ -55,8 +55,8 @@ public class MapView extends VerticalLayout {
         popupShip.addTrackButtonClickListener(e -> {
             System.out.println("Track btn clicked!");
         });
-        data = new TextField("Data");
-        data.setReadOnly(true);
+        reportTime = new TextField("Data");
+        reportTime.setReadOnly(true);
         add(this.map);
         this.setSizeFull();
         var hl = new HorizontalLayout();
@@ -73,32 +73,36 @@ public class MapView extends VerticalLayout {
         numberField.setStep(10);
         var startButton = new Button();
         startButton.setIcon(new Icon(VaadinIcon.PLAY));
+        var stopButton = new Button();
+        stopButton.setIcon(new Icon(VaadinIcon.STOP));
+        hl.add(aisDataPicker, numberField, reportTime, startButton, stopButton);
 
-        hl.add(aisDataPicker, numberField, data, startButton);
-
-        aisDataPicker.addValueChangeListener(e -> {
-            try {
-                updateSource();
-            } catch (FileNotFoundException fileNotFoundException) {
-                fileNotFoundException.printStackTrace();
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
-
-        numberField.addValueChangeListener(e -> {
-            try {
-                updateMap(numberField.getOptionalValue().orElse(1.0).intValue());
-            } catch (FileNotFoundException fileNotFoundException) {
-                fileNotFoundException.printStackTrace();
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+//        aisDataPicker.addValueChangeListener(e -> {
+//            try {
+//                updateSource();
+//            } catch (FileNotFoundException fileNotFoundException) {
+//                fileNotFoundException.printStackTrace();
+//            } catch (InterruptedException ex) {
+//                throw new RuntimeException(ex);
+//            }
+//        });
+//
+//        numberField.addValueChangeListener(e -> {
+//            try {
+//                updateMap(numberField.getOptionalValue().orElse(1.0).intValue());
+//            } catch (FileNotFoundException fileNotFoundException) {
+//                fileNotFoundException.printStackTrace();
+//            } catch (InterruptedException ex) {
+//                throw new RuntimeException(ex);
+//            }
+//        });
         startButton.addClickListener(e -> {
             startSimulation();
         });
 
+        stopButton.addClickListener(e -> {
+            stopSimulation();
+        });
         add(hl);
         add(popupShip);
     }
@@ -123,7 +127,7 @@ public class MapView extends VerticalLayout {
                 e.printStackTrace();
             }
         }
-        data.setValue(String.valueOf(reportsContainers.get(reportNumber).getTime()));
+        reportTime.setValue(String.valueOf(reportsContainers.get(reportNumber).getTime()));
     }
 
     private void updateSource() throws FileNotFoundException, InterruptedException {
@@ -132,9 +136,32 @@ public class MapView extends VerticalLayout {
         updateMap(1);
     }
 
+    private void updateMapSimulation(ReportsContainer reportsContainer) {
+        currentReports = reportsContainer.getReports();
+        var time = reportsContainer.getTime();
+        if (!componentsOnMap.isEmpty()) {
+            this.map.removeLComponents(componentsOnMap);
+        }
+        for (var entry : currentReports.entrySet()) {
+            if (entry.getValue().isEmpty()) {
+                continue;
+            }
+            try {
+                var shipData = new ShipData(entry.getValue());
+                currentShipData.put(shipData.getMmsi(), shipData);
+                addMarker(shipData);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        reportTime.setValue(String.valueOf(time));
+    }
+
     private void startSimulation() {
-        ReportsEvent reportsEvent = event -> {
-            System.out.println("Event received");
+        ReportsEvent reportsEvent = reportsContainer -> {
+            getUI().ifPresent(ui -> ui.access(() -> {
+                updateMapSimulation(reportsContainer);
+            }));
         };
         udpListener.addMessageListener(reportsEvent);
         udpListener.startListening();

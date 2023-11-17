@@ -1,5 +1,5 @@
 package com.example.aismarinetracker.decoder;
 
 public interface MessageListener {
-    void onMessageReceived(String... messages);
+    void onMessageReceived(String messages);
 }

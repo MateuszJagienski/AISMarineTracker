@@ -1,12 +1,14 @@
 package com.example.aismarinetracker.decoder;
 
 
+import com.example.aismarinetracker.decoder.exceptions.UnsupportedMessageType;
 import com.example.aismarinetracker.decoder.reports.AisMessage;
 import com.example.aismarinetracker.decoder.reports.BaseStationReport;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,35 +18,49 @@ public class UdpListener {
     private final List<ReportsEvent> reportsEvents = new ArrayList<>();
     private LocalDateTime time;
     private final AisHandler aisHandler;
-    private final AisSocket aisSocket;
+    private final MessageListenerManager messageListenerManager;
     private MessageListener messageListener;
+    private List<String> messageHistory = new ArrayList<>();
+    private static final Logger logger = Logger.getLogger(UdpListener.class.getName());
 
-    public UdpListener(AisHandler aisHandler) {
+    public UdpListener(AisHandler aisHandler, MessageListenerManager messageListenerManager) {
         this.aisHandler = aisHandler;
-        this.aisSocket = new AisSocket();
+        this.messageListenerManager = messageListenerManager;
         messageListener = messages1 -> {
             try {
-                if (messages1[0].split(",")[1].equals("2")) return; // implements waiting mechanizm
-                System.out.println("Received: " + Arrays.toString(messages1));
-                var aisMessage = aisHandler.handleAisMessage(messages1);
-                associatedReports = mapReports(aisMessage);
-                if (aisMessage instanceof BaseStationReport report) {
-                    time = LocalDateTime.of(report.getYear(), report.getMonth(), report.getDay(), report.getHour(), report.getMinute(), report.getSecond());
-                }
-                System.out.println("fire event!");
-                fireEvent(new ReportsContainer(associatedReports, time));
-            } catch (Exception e) {
-
+                handleMessageEvent(messages1);
+            } catch (UnsupportedMessageType e) {
+                logger.info("Creating AisMessage failed " + e.getClass().getName());
             }
         };
     }
 
+    private void handleMessageEvent(String rawMessage) {
+        AisMessage aisMessage;
+        var messageFields = rawMessage.split(",");
+        if (messageFields[1].equals("2")) {
+            if (messageFields[2].equals("1")) {
+                messageHistory.add(rawMessage);
+                return;
+            } else {
+                aisMessage = aisHandler.handleAisMessage(messageHistory.get(messageHistory.size() - 1), rawMessage);
+            }
+        } else {
+            aisMessage = aisHandler.handleAisMessage(rawMessage);
+        }
+        associatedReports = mapReports(aisMessage);
+        if (aisMessage instanceof BaseStationReport report) {
+            time = LocalDateTime.of(report.getYear(), report.getMonth(), report.getDay(), report.getHour(), report.getMinute(), report.getSecond());
+        }
+        fireEvent(new ReportsContainer(associatedReports, time));
+    }
+
     public void startListening() {
-        aisSocket.addMessageListener(messageListener);
+        messageListenerManager.addMessageListener(messageListener);
     }
 
     public void stopListening() {
-        aisSocket.removeMessageListener(messageListener);
+        messageListenerManager.removeMessageListener(messageListener);
     }
 
     public void addMessageListener(ReportsEvent reportsEvent) {
