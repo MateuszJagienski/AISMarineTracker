@@ -1,23 +1,27 @@
 package com.example.aismarinetracker.decoder;
 
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 
-public class AisSocket {
+@Component
+public class MessageListenerManager {
     private final int port = 12346;
-    private final String host = "127.0.0.1";
     private final ArrayList<MessageListener> messageListeners = new ArrayList<>();
-
+    private DatagramSocket socket;
     private Thread udpThread;
-    public void run() {
+
+    public void startListening() {
+        if (udpThread != null && udpThread.isAlive()) return;
        udpThread = new Thread(() -> {
            try {
                // Creating a UDP socket on the specified port
-               DatagramSocket socket = new DatagramSocket(port);
+               socket = new DatagramSocket(port);
 
                System.out.println("Listening on port: " + socket.getLocalPort());
-               while (true) {
+               while (!socket.isClosed()) {
                    // Buffer to receive incoming data
                    byte[] receiveData = new byte[1024];
 
@@ -34,24 +38,33 @@ public class AisSocket {
                    System.out.println("Received message: " + receivedMessage);
                }
            } catch (IOException e) {
-               e.printStackTrace();
+               if (!socket.isConnected())
+                   socket.close();
+           } finally {
+                socket.close();
            }
        });
        udpThread.start();
     }
 
     public void addMessageListener(MessageListener messageListener) {
-        if (messageListeners.isEmpty())
-            run();
-
         messageListeners.add(messageListener);
+        startListeningIfNeeded();
     }
 
     public void removeMessageListener(MessageListener messageListener) {
         messageListeners.remove(messageListener);
-        if (messageListeners.isEmpty())
-            udpThread.interrupt();
+        closeSocketIfNoListeners();
+    }
+
+    private void startListeningIfNeeded() {
+        if (messageListeners.isEmpty()) return;
+        startListening();
+    }
+
+    private void closeSocketIfNoListeners() {
+        if (messageListeners.isEmpty() && socket != null && !socket.isClosed())
+            socket.close();
     }
 
 }
-
