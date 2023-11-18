@@ -1,8 +1,10 @@
 package com.example.aismarinetracker.views;
 
 import com.example.aismarinetracker.decoder.*;
+import com.example.aismarinetracker.decoder.enums.ShipType;
 import com.example.aismarinetracker.decoder.reports.*;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.icon.Icon;
@@ -22,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 
 @Route("map")
 @PreserveOnRefresh
@@ -35,9 +38,13 @@ public class MapView extends VerticalLayout {
     private static Map<Integer, ShipData> currentShipData = new HashMap<>();
     private TextField reportTime;
     private ComboBox<File> aisDataPicker;
+    private Checkbox toggleFilters;
+    private ComboBox<ShipType.SimplifiedShipType> shipTypeFilter;
     private PopupShip popupShip = new PopupShip();
     private final UdpListener udpListener;
     private final AisFromFile aisFromFile;
+    private static final Logger logger = Logger.getLogger(MapView.class.getName());
+
 
     @Autowired
     public MapView(AisFromFile aisFromFile, UdpListener udpListener) {
@@ -77,7 +84,10 @@ public class MapView extends VerticalLayout {
         var stop = new Icon(VaadinIcon.STOP);
         toggleButton.setIcon(play);
         AtomicBoolean isSimulationRunning = new AtomicBoolean(false);
-        hl.add(aisDataPicker, numberField, reportTime, toggleButton);
+        toggleFilters = new Checkbox();
+        shipTypeFilter = new ComboBox<>();
+        shipTypeFilter.setItems(ShipType.SimplifiedShipType.values());
+        hl.add(aisDataPicker, numberField, reportTime, toggleButton, shipTypeFilter, toggleFilters);
 
 //        aisDataPicker.addValueChangeListener(e -> {
 //            try {
@@ -155,12 +165,22 @@ public class MapView extends VerticalLayout {
             try {
                 var shipData = new ShipData(entry.getValue());
                 currentShipData.put(shipData.getMmsi(), shipData);
-                addMarker(shipData);
+                if (checkFilters(shipData))
+                    addMarker(shipData);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.info("Placing icon on map failed! " + e.getClass().getName());
             }
         }
         reportTime.setValue(String.valueOf(time));
+    }
+
+    private boolean checkFilters(ShipData shipData) {
+        if (!toggleFilters.getValue()) return true;
+        // check ship type
+        var simplifiedShipType = ShipType.from(shipData.getShipType());
+        if (!simplifiedShipType.equals(shipTypeFilter.getValue()))
+            return false;
+        return true;
     }
 
     ReportsEvent reportsEvent = reportsContainer -> {

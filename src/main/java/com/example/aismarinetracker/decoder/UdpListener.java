@@ -27,7 +27,7 @@ public class UdpListener {
     public UdpListener(AisHandler aisHandler, MessageListenerManager messageListenerManager) {
         this.aisHandler = aisHandler;
         this.messageListenerManager = messageListenerManager;
-        this.messageListenerManager.addMessageListener(messageListener);
+        startListening(messageListener);
     }
 
     MessageListener messageListener = message1 -> {
@@ -58,11 +58,11 @@ public class UdpListener {
         fireEvent(new ReportsContainer(associatedReports, time));
     }
 
-    public void startListening() {
+    public void startListening(MessageListener messageListener) {
         messageListenerManager.addMessageListener(messageListener);
     }
 
-    public void stopListening() {
+    public void stopListening(MessageListener messageListener) {
         messageListenerManager.removeMessageListener(messageListener);
     }
 
