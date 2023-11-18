@@ -1,5 +1,6 @@
 import socket
 import time
+import sys
 
 # Function to read data from a text file
 def read_data_from_file(file_name):
@@ -28,11 +29,19 @@ def send_data_via_udp(data, host='127.0.0.1', port=12345):
     udp_socket.close()
 
 if __name__ == "__main__":
-    file_name = 'src/main/resources/META-INF/resources/aisdata/allAisData.txt'  # File name with data
-    data = read_data_from_file(file_name)
+    if len(sys.argv) < 2 or len(sys.argv) > 4:
+        print("Usage: python script_name.py file_name [udp_host] [udp_port]")
+    else:
+        file_name = sys.argv[1]  # File name with data
+        data = read_data_from_file(file_name)
 
-    # UDP Host and Port
-    udp_host = '127.0.0.1'  # Change to the address you want to connect to
-    udp_port = 12346  # Change to the desired port
+        udp_host = '127.0.0.1'
+        udp_port = 12346
 
-    send_data_via_udp(data, udp_host, udp_port)
+        if len(sys.argv) >= 3:
+            udp_host = sys.argv[2]  # UDP Host
+
+        if len(sys.argv) == 4:
+            udp_port = int(sys.argv[3])  # UDP Port
+
+        send_data_via_udp(data, udp_host, udp_port)
