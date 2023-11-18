@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -15,35 +16,37 @@ import java.util.stream.Collectors;
 public class UdpListener {
 
     private Map<Integer, List<AisMessage>> associatedReports = new HashMap<>();
-    private final List<ReportsEvent> reportsEvents = new ArrayList<>();
+    private final List<ReportsEvent> reportsEvents = new CopyOnWriteArrayList<>();
     private LocalDateTime time;
     private final AisHandler aisHandler;
     private final MessageListenerManager messageListenerManager;
-    private MessageListener messageListener;
-    private List<String> messageHistory = new ArrayList<>();
+    private final Stack<String> tempMessage = new Stack<>();
+
     private static final Logger logger = Logger.getLogger(UdpListener.class.getName());
 
     public UdpListener(AisHandler aisHandler, MessageListenerManager messageListenerManager) {
         this.aisHandler = aisHandler;
         this.messageListenerManager = messageListenerManager;
-        messageListener = messages1 -> {
-            try {
-                handleMessageEvent(messages1);
-            } catch (UnsupportedMessageType e) {
-                logger.info("Creating AisMessage failed " + e.getClass().getName());
-            }
-        };
+        this.messageListenerManager.addMessageListener(messageListener);
     }
+
+    MessageListener messageListener = message1 -> {
+        try {
+            handleMessageEvent(message1);
+        } catch (UnsupportedMessageType e) {
+            logger.info("Creating AisMessage failed " + e.getClass().getName());
+        }
+    };
 
     private void handleMessageEvent(String rawMessage) {
         AisMessage aisMessage;
         var messageFields = rawMessage.split(",");
         if (messageFields[1].equals("2")) {
             if (messageFields[2].equals("1")) {
-                messageHistory.add(rawMessage);
+                tempMessage.push(rawMessage);
                 return;
             } else {
-                aisMessage = aisHandler.handleAisMessage(messageHistory.get(messageHistory.size() - 1), rawMessage);
+                aisMessage = aisHandler.handleAisMessage(tempMessage.pop(), rawMessage);
             }
         } else {
             aisMessage = aisHandler.handleAisMessage(rawMessage);
@@ -64,11 +67,15 @@ public class UdpListener {
     }
 
     public void addMessageListener(ReportsEvent reportsEvent) {
-        reportsEvents.add(reportsEvent);
+         synchronized (reportsEvents) {
+             reportsEvents.add(reportsEvent);
+         }
     }
 
     public void removeMessageListener(ReportsEvent reportsEvent) {
-        reportsEvents.remove(reportsEvent);
+        synchronized (reportsEvents) {
+            reportsEvents.remove(reportsEvent);
+        }
     }
 
     private Map<Integer, List<AisMessage>> mapReports(AisMessage aisMessage) {

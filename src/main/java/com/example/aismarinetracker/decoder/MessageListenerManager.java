@@ -5,13 +5,15 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component
 public class MessageListenerManager {
     private final int port = 12346;
-    private final ArrayList<MessageListener> messageListeners = new ArrayList<>();
+    private final List<MessageListener> messageListeners = new CopyOnWriteArrayList<>();
     private DatagramSocket socket;
     private Thread udpThread;
     private static final Logger logger = Logger.getLogger(MessageListenerManager.class.getName());
@@ -49,13 +51,17 @@ public class MessageListenerManager {
     }
 
     public void addMessageListener(MessageListener messageListener) {
-        messageListeners.add(messageListener);
-        startListeningIfNeeded();
+        synchronized (messageListeners) {
+            messageListeners.add(messageListener);
+            startListeningIfNeeded();
+        }
     }
 
     public void removeMessageListener(MessageListener messageListener) {
-        messageListeners.remove(messageListener);
-        closeSocketIfNoListeners();
+        synchronized (messageListeners) {
+            messageListeners.remove(messageListener);
+            closeSocketIfNoListeners();
+        }
     }
 
     private void startListeningIfNeeded() {

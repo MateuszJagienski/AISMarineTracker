@@ -21,6 +21,7 @@ import software.xdev.vaadin.maps.leaflet.flow.data.LTileLayer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Route("map")
 @PreserveOnRefresh
@@ -71,11 +72,12 @@ public class MapView extends VerticalLayout {
         numberField.setMin(1);
         numberField.setStepButtonsVisible(true);
         numberField.setStep(10);
-        var startButton = new Button();
-        startButton.setIcon(new Icon(VaadinIcon.PLAY));
-        var stopButton = new Button();
-        stopButton.setIcon(new Icon(VaadinIcon.STOP));
-        hl.add(aisDataPicker, numberField, reportTime, startButton, stopButton);
+        var toggleButton = new Button();
+        var play = new Icon(VaadinIcon.PLAY);
+        var stop = new Icon(VaadinIcon.STOP);
+        toggleButton.setIcon(play);
+        AtomicBoolean isSimulationRunning = new AtomicBoolean(false);
+        hl.add(aisDataPicker, numberField, reportTime, toggleButton);
 
 //        aisDataPicker.addValueChangeListener(e -> {
 //            try {
@@ -96,13 +98,17 @@ public class MapView extends VerticalLayout {
 //                throw new RuntimeException(ex);
 //            }
 //        });
-        startButton.addClickListener(e -> {
-            startSimulation();
+        toggleButton.addClickListener(e -> {
+            if (isSimulationRunning.get()) {
+                stopSimulation();
+                toggleButton.setIcon(play);
+            } else {
+                startSimulation();
+                toggleButton.setIcon(stop);
+            }
+            isSimulationRunning.set(!isSimulationRunning.get()); // Toggle the simulation state
         });
 
-        stopButton.addClickListener(e -> {
-            stopSimulation();
-        });
         add(hl);
         add(popupShip);
     }
@@ -157,21 +163,19 @@ public class MapView extends VerticalLayout {
         reportTime.setValue(String.valueOf(time));
     }
 
+    ReportsEvent reportsEvent = reportsContainer -> {
+        getUI().ifPresent(ui -> ui.access(() -> {
+            updateMapSimulation(reportsContainer);
+        }));
+    };
+
     private void startSimulation() {
-        ReportsEvent reportsEvent = reportsContainer -> {
-            getUI().ifPresent(ui -> ui.access(() -> {
-                updateMapSimulation(reportsContainer);
-            }));
-        };
         udpListener.addMessageListener(reportsEvent);
-        udpListener.startListening();
-        System.out.println("Simulation started");
     }
 
     private void stopSimulation() {
-        udpListener.stopListening();
+        udpListener.removeMessageListener(reportsEvent);
     }
-
 
     public static Map<Integer, List<AisMessage>> getCurrentReports() {
         return currentReports;
