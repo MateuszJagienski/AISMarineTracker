@@ -1,4 +1,4 @@
 package com.example.aismarinetracker.decoder.exceptions;
 
-public class InvalidCoordinatesException {
+public class InvalidCoordinatesException extends Exception {
 }

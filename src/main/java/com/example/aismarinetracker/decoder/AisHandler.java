@@ -1,6 +1,7 @@
 package com.example.aismarinetracker.decoder;
 
 
+import com.example.aismarinetracker.decoder.exceptions.UnsupportedMessageType;
 import com.example.aismarinetracker.decoder.reports.AisMessage;
 import com.example.aismarinetracker.decoder.reports.AisMessageFactory;
 import com.sun.tools.javac.Main;
@@ -22,7 +23,7 @@ public class AisHandler {
         this.aisMessageFactory = aisMessageFactory;
     }
 
-    public AisMessage handleAisMessage(String... nmeaMessage) {
+    public AisMessage handleAisMessage(String... nmeaMessage) throws UnsupportedMessageType {
         for (String s : nmeaMessage)
             if (!AisValidator.isMessageFormatValid(s)) {
                 logger.warning("message: " + s + " is invalid");

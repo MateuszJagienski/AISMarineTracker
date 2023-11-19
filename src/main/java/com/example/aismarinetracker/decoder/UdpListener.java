@@ -31,14 +31,18 @@ public class UdpListener {
     }
 
     MessageListener messageListener = message1 -> {
+        if (!AisValidator.validateMessageFieldCount(message1)) {
+            logger.info("Invalid message format received!");
+            return;
+        }
         try {
             handleMessageEvent(message1);
-        } catch (UnsupportedMessageType e) {
+        } catch (Exception e) {
             logger.info("Creating AisMessage failed " + e.getClass().getName());
         }
     };
 
-    private void handleMessageEvent(String rawMessage) {
+    private void handleMessageEvent(String rawMessage) throws UnsupportedMessageType {
         AisMessage aisMessage;
         var messageFields = rawMessage.split(",");
         if (messageFields[1].equals("2")) {

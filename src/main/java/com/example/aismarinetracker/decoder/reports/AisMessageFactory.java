@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AisMessageFactory {
 
-    public AisMessage createAisMessage(String messagePayload) {
+    public AisMessage createAisMessage(String messagePayload) throws UnsupportedMessageType {
         return switch (MessageType.from(Decoders.toUnsignedInteger(messagePayload.substring(0, 6)))) {
             case PositionReportClassA -> new PositionReportClassAScheduled(messagePayload); // type 1
             case PositionReportClassAAssignedSchedule -> new PositionReportClassA(messagePayload); // type 2

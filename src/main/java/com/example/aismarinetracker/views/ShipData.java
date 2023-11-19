@@ -1,13 +1,14 @@
 package com.example.aismarinetracker.views;
 
-import com.example.aismarinetracker.decoder.AisService;
 import com.example.aismarinetracker.decoder.enums.NavigationStatus;
 import com.example.aismarinetracker.decoder.enums.ShipType;
+import com.example.aismarinetracker.decoder.exceptions.InvalidCoordinatesException;
 import com.example.aismarinetracker.decoder.reports.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Getter
 @Setter
@@ -24,7 +25,8 @@ public class ShipData {
     private ShipType shipType;
     private String destination;
     private int mmsi;
-    public ShipData(List<AisMessage> messages) throws Exception {
+    private static final Logger logger = Logger.getLogger(ShipData.class.getName());
+    public ShipData(List<AisMessage> messages) throws InvalidCoordinatesException {
         messages.forEach(e -> {
             mmsi = e.getMMSI();
             if (e instanceof IDynamicPositionReport report) {
@@ -49,14 +51,18 @@ public class ShipData {
                 longitude = report.getLongitude();
             }
         });
-        validate();
+        try {
+            validate();
+        } catch (Exception e) {
+            logger.info("Validating message failed! " + e.getClass().getName());
+            throw e;
+        }
 
     }
 
-    private void validate() {
-        if (latitude > 90 || longitude > 180) {
-            //throw new RuntimeException("Invalid coordinates");
-            // todo
+    private void validate() throws InvalidCoordinatesException {
+        if (latitude > 90 || longitude > 180 || latitude <= 0 || longitude <= 0) {
+            throw new InvalidCoordinatesException();
         }
         if (shipType == null) {
             shipType = ShipType.NotAvailable;

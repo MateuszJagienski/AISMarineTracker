@@ -2,6 +2,7 @@ package com.example.aismarinetracker.decoder;
 
 
 import com.example.aismarinetracker.decoder.enums.MessageType;
+import com.example.aismarinetracker.decoder.exceptions.UnsupportedMessageType;
 import com.example.aismarinetracker.decoder.reports.AisMessage;
 import com.example.aismarinetracker.decoder.reports.AisMessageFactory;
 import com.example.aismarinetracker.decoder.reports.BaseStationReport;
@@ -55,14 +56,14 @@ public class AisFromFile {
                 if (aisMessage instanceof BaseStationReport x) {
                     reports.add(new ReportsContainer(deepCopy(associatedReports), LocalDateTime.of(x.getYear(), x.getMonth(), x.getDay(), x.getHour(), x.getMinute(), x.getSecond())));
                 }
-            } catch (RuntimeException e ) {
+            } catch (Exception e ) {
                 logger.info("Creating AisMessage failed " + e.getClass().getName());
             }
         }
         return reports;
     }
 
-    private AisMessage getMessage(String line, Scanner scanner) {
+    private AisMessage getMessage(String line, Scanner scanner) throws UnsupportedMessageType {
         AisMessage aisMessage;
         if (line.split(",")[1].equals("2")) {
             var nextLine = scanner.nextLine();
@@ -112,7 +113,7 @@ public class AisFromFile {
                 }
                 messages.add(aisMessage);
 
-            } catch (RuntimeException e ) {
+            } catch (Exception e ) {
                 logger.info("Creating AisMessage failed  " + e.getClass().getName());
             }
         }
@@ -150,15 +151,14 @@ public class AisFromFile {
                         messages.add(aisMessage);
                     }
                 }
-
-            } catch (RuntimeException e ) {
-                //e.printStackTrace();
+            } catch (Exception e ) {
+                logger.info("Creating message failed! " + e.getClass().getName());
             }
         }
         return messages;
     }
 
-    private static Map<Integer, List<AisMessage>> deepCopy(Map<Integer, List<AisMessage>> original) {
+    private static Map<Integer, List<AisMessage>> deepCopy(Map<Integer, List<AisMessage>> original) throws UnsupportedMessageType {
         Map<Integer, List<AisMessage>> copy = new HashMap<>();
         for (Map.Entry<Integer, List<AisMessage>> entry : original.entrySet()) {
             var newList = new ArrayList<AisMessage>();
@@ -180,7 +180,7 @@ public class AisFromFile {
                 file.delete();
                 writeToFile(newFile, validMessages);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.info("Cleaning file failed! " + e.getClass().getName());
             }
         }
         return newFile;
@@ -188,7 +188,6 @@ public class AisFromFile {
 
     private StringBuilder findValidMessages(Scanner scanner) {
         StringBuilder validMessage = new StringBuilder();
-        //validMessage.append("OK\n");
         while (scanner.hasNextLine()) {
             var line = scanner.nextLine();
 
