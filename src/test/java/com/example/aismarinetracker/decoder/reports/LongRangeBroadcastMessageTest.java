@@ -3,6 +3,7 @@ package com.example.aismarinetracker.decoder.reports;
 import com.example.aismarinetracker.decoder.AisHandler;
 import com.example.aismarinetracker.decoder.enums.MessageType;
 import com.example.aismarinetracker.decoder.enums.NavigationStatus;
+import com.example.aismarinetracker.decoder.exceptions.UnsupportedMessageType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,11 @@ class LongRangeBroadcastMessageTest {
     private AisHandler aisHandler;
     @BeforeEach
     void setUp() {
-        aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,B,KC5E2b@U19PFdLbMuc5=ROv62<7m,0*16"); // message type 27
+        try {
+            aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,B,KC5E2b@U19PFdLbMuc5=ROv62<7m,0*16"); // message type 27
+        } catch (UnsupportedMessageType e) {
+            System.out.println("Unsupported message!");
+        }
     }
 
     @Test

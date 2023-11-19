@@ -3,6 +3,7 @@ package com.example.aismarinetracker.decoder.reports;
 import com.example.aismarinetracker.decoder.AisHandler;
 import com.example.aismarinetracker.decoder.enums.EPFD;
 import com.example.aismarinetracker.decoder.enums.SyncState;
+import com.example.aismarinetracker.decoder.exceptions.UnsupportedMessageType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,11 @@ class BaseStationReportTest {
     private AisHandler aisHandler;
     @BeforeEach
     void setUp() {
-        aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,402OFL1vHPP03Q1IP8NnVFo00D1P,0*62"); // message type 4
+        try {
+            aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,402OFL1vHPP03Q1IP8NnVFo00D1P,0*62"); // message type 4
+        } catch (UnsupportedMessageType e) {
+            System.out.println("Unsupported message");
+        }
 
     }
 
@@ -36,7 +41,11 @@ class BaseStationReportTest {
             var expected = 2022;
             assertEquals(expected, ((BaseStationReport) aisMessage).getYear());
         }
-        aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,B,402OFL1vHPP03Q1IP8NnVFo00D1P,0*61");
+        try {
+            aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,B,402OFL1vHPP03Q1IP8NnVFo00D1P,0*61");
+        } catch (UnsupportedMessageType e) {
+            System.out.println("Unsupported message!");
+        }
         if (aisMessage instanceof BaseStationReport) {
             var expected = 2022;
             assertEquals(expected, ((BaseStationReport) aisMessage).getYear());

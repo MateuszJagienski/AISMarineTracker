@@ -3,6 +3,7 @@ package com.example.aismarinetracker.decoder.reports;
 import com.example.aismarinetracker.decoder.AisHandler;
 import com.example.aismarinetracker.decoder.enums.EPFD;
 import com.example.aismarinetracker.decoder.enums.ShipType;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,8 @@ class ShipAndVoyageRelatedDataTest {
     @Autowired
     private AisHandler aisHandler;
     @BeforeEach
-    void setUp() {
+    @SneakyThrows
+	void setUp() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,1,A,54``>?42?ED8?ITkJ21LT<dv2222222222222216DhH;=4L?0>D3;DmjH888,0*71",
                 "!AIVDM,2,2,1,A,88888888880,2*25"); // message type 5
 
@@ -26,7 +28,8 @@ class ShipAndVoyageRelatedDataTest {
 
     @Test
     @DisplayName("Test message length")
-    void getMessageLength() {
+    @SneakyThrows
+	void getMessageLength() {
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 426;
             assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getBinaryMessagePayload().length());
@@ -39,7 +42,8 @@ class ShipAndVoyageRelatedDataTest {
         }
     }
     @Test
-    void getAisVersion() {
+    @SneakyThrows
+	void getAisVersion() {
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
             var expected = 1;
             assertEquals(expected, ((StaticAndVoyageRelatedData) aisMessage).getAisVersion());
@@ -53,7 +57,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getImoNumber() {
+    @SneakyThrows
+	void getImoNumber() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -63,7 +68,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getCallSign() {
+    @SneakyThrows
+	void getCallSign() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -73,7 +79,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getVesselName() {
+    @SneakyThrows
+	void getVesselName() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -83,7 +90,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getShipType() {
+    @SneakyThrows
+	void getShipType() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -93,7 +101,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getDimensionToBow() {
+    @SneakyThrows
+	void getDimensionToBow() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -103,7 +112,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getDimensionToStern() {
+    @SneakyThrows
+	void getDimensionToStern() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -113,7 +123,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getDimensionToPort() {
+    @SneakyThrows
+	void getDimensionToPort() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -123,7 +134,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getDimensionToStarboard() {
+    @SneakyThrows
+	void getDimensionToStarboard() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -133,7 +145,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getTypeOfEPFD() {
+    @SneakyThrows
+	void getTypeOfEPFD() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -143,7 +156,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getMonth() {
+    @SneakyThrows
+	void getMonth() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -153,7 +167,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getDay() {
+    @SneakyThrows
+	void getDay() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -163,7 +178,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getHour() {
+    @SneakyThrows
+	void getHour() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -173,7 +189,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getMinute() {
+    @SneakyThrows
+	void getMinute() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -183,7 +200,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getDraught() {
+    @SneakyThrows
+	void getDraught() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -193,7 +211,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void getDestination() {
+    @SneakyThrows
+	void getDestination() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {
@@ -203,7 +222,8 @@ class ShipAndVoyageRelatedDataTest {
     }
 
     @Test
-    void isDTE() {
+    @SneakyThrows
+	void isDTE() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,539S:k40000000c3G04PPh63<00000000080000o1PVG2uGD:00000000000,0*34",
                 "!AIVDM,2,2,0,B,00000000000,2*27");
         if (aisMessage instanceof StaticAndVoyageRelatedData) {

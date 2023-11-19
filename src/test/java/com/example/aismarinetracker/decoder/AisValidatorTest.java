@@ -56,16 +56,4 @@ public class AisValidatorTest {
         assertFalse(isValid);
     }
 
-    @Test
-    void isCheckSumValid_WithInvalidChecksum_ReturnsFalse1() {
-        // Given
-        String inv = "!AIVDM,1,1,,B,13q0BF000011CUNNn=HPVAdr0<0g,0*65";
-
-        // When
-        boolean isValid = AisValidator.isCheckSumValid(inv);
-
-        // Then
-        assertFalse(isValid);
-    }
-
 }

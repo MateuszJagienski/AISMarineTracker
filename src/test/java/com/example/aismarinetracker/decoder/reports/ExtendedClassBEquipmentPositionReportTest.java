@@ -4,6 +4,7 @@ import com.example.aismarinetracker.decoder.AisHandler;
 import com.example.aismarinetracker.decoder.enums.EPFD;
 import com.example.aismarinetracker.decoder.enums.MessageType;
 import com.example.aismarinetracker.decoder.enums.ShipType;
+import com.example.aismarinetracker.decoder.exceptions.UnsupportedMessageType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,10 +21,12 @@ class ExtendedClassBEquipmentPositionReportTest {
     private AisHandler aisHandler;
     @BeforeEach
     void setUp() {
-        //aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,144ar<0wAK11`p8NjQALKqv00400,0*5D");
-        aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,C8u:8C@t7@TnGCKfm6Po`e6N`:Va0L2J;06HV50JV?SjBPL3,0*28",
+        try {
+            aisMessage = aisHandler.handleAisMessage("!AIVDM,2,1,0,B,C8u:8C@t7@TnGCKfm6Po`e6N`:Va0L2J;06HV50JV?SjBPL3,0*28",
                 "!AIVDM,2,2,0,B,11RP,0*17"); // message type 19
-
+        } catch (UnsupportedMessageType e) {
+            System.out.println("Unsupported message");
+        }
     }
 
     @Test

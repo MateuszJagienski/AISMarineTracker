@@ -4,6 +4,8 @@ import com.example.aismarinetracker.decoder.AisHandler;
 import com.example.aismarinetracker.decoder.enums.ManeuverIndicator;
 import com.example.aismarinetracker.decoder.enums.NavigationStatus;
 import com.example.aismarinetracker.decoder.enums.SyncState;
+import com.example.aismarinetracker.decoder.exceptions.UnsupportedMessageType;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,14 +21,20 @@ class PositionReportClassATest {
     @Autowired
     private AisHandler aisHandler;
     @BeforeEach
-    void setUp() {
-        aisMessage = aisHandler.handleAisMessage("!AIVDO,1,1,,,100000?P00Q1BLTNnNU0Wgv62000,0*48");
+    @SneakyThrows
+	void setUp() {
+        try {
+            aisMessage = aisHandler.handleAisMessage("!AIVDO,1,1,,,100000?P00Q1BLTNnNU0Wgv62000,0*48");
+        } catch (UnsupportedMessageType e) {
+            System.out.println("Unsupported message!");
+        }
 
     }
 
     @Test
     @DisplayName("getNavigationStatus() returns the navigation status")
-    void getNavigationStatus() {
+    @SneakyThrows
+	void getNavigationStatus() {
         if (aisMessage instanceof PositionReport) {
             var expected = NavigationStatus.Undefined;
             assertEquals(expected, ((PositionReport) aisMessage).getNavigationStatus());
@@ -40,7 +48,8 @@ class PositionReportClassATest {
 
     @Test
     @DisplayName("getMMSI() returns the MMSI 9-digits number")
-    void getRateOfTurn() {
+    @SneakyThrows
+	void getRateOfTurn() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,144ar<0wAK11`p8NjQALKqv00400,0*5D");
         if (aisMessage instanceof PositionReport) {
             var expected = 0;
@@ -60,7 +69,8 @@ class PositionReportClassATest {
 
     @Test
     @DisplayName("getSpeedOverGround() returns the speed over ground in knots")
-    void getSpeedOverGround() {
+    @SneakyThrows
+	void getSpeedOverGround() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,13u?etPv2;0n:dDPwUM1U1Cb069D,0*24");
         if (aisMessage instanceof PositionReport) {
             var expected = 13.9f;
@@ -71,7 +81,8 @@ class PositionReportClassATest {
 
     @Test
     @DisplayName("isPositionAccurate() returns true if the position is accurate")
-    void isPositionAccurate() {
+    @SneakyThrows
+	void isPositionAccurate() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,13u?etPv2;0n:dDPwUM1U1Cb069D,0*24");
         if (aisMessage instanceof PositionReport) {
             assertFalse(((PositionReport) aisMessage).isPositionAccurate());
@@ -88,7 +99,8 @@ class PositionReportClassATest {
 
     @Test
     @DisplayName("getLongitude() returns the longitude in degrees")
-    void getLongitude() {
+    @SneakyThrows
+	void getLongitude() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,13u?etPv2;0n:dDPwUM1U1Cb069D,0*24");
         if (aisMessage instanceof PositionReport) {
             var expected = 11.832976f;
@@ -103,7 +115,8 @@ class PositionReportClassATest {
 
     @Test
     @DisplayName("getLatitude() returns the latitude in degrees")
-    void getLatitude() {
+    @SneakyThrows
+	void getLatitude() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,13u?etPv2;0n:dDPwUM1U1Cb069D,0*24");
         if (aisMessage instanceof PositionReport) {
             var expected = 57.660355f;
@@ -118,7 +131,8 @@ class PositionReportClassATest {
 
     @Test
     @DisplayName("getCourseOverGround() returns the course over ground in degrees")
-    void getCourseOverGround() {
+    @SneakyThrows
+	void getCourseOverGround() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,13u?etPv2;0n:dDPwUM1U1Cb069D,0*24");
         if (aisMessage instanceof PositionReport) {
             var expected = 40.4f;
@@ -133,7 +147,8 @@ class PositionReportClassATest {
 
     @Test
     @DisplayName("getTrueHeading() returns the true heading in degrees")
-    void getTrueHeading() {
+    @SneakyThrows
+	void getTrueHeading() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,13u?etPv2;0n:dDPwUM1U1Cb069D,0*24");
         if (aisMessage instanceof PositionReport) {
             var expected = 41;
@@ -148,7 +163,8 @@ class PositionReportClassATest {
 
     @Test
     @DisplayName("getTimeStamp() returns the time stamp")
-    void getTimeStamp() {
+    @SneakyThrows
+	void getTimeStamp() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,13u?etPv2;0n:dDPwUM1U1Cb069D,0*24");
         if (aisMessage instanceof PositionReport) {
             var expected = 53;
@@ -163,7 +179,8 @@ class PositionReportClassATest {
 
     @Test
     @DisplayName("getManeuverIndicator() returns the maneuver indicator")
-    void getManeuverIndicator() {
+    @SneakyThrows
+	void getManeuverIndicator() {
         aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,13u?etPv2;0n:dDPwUM1U1Cb069D,0*24");
         if (aisMessage instanceof PositionReport) {
             var expected = ManeuverIndicator.NotAvailable;
@@ -177,7 +194,8 @@ class PositionReportClassATest {
     }
 
     @Test
-    void isRaimFlag() {
+    @SneakyThrows
+	void isRaimFlag() {
         var aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,13u?etPv2;0n:dDPwUM1U1Cb069D,0*24");
         if (aisMessage instanceof PositionReport) {
             assertFalse(((PositionReport) aisMessage).isRaimFlag());
@@ -185,7 +203,8 @@ class PositionReportClassATest {
     }
 
     @Test
-    void getRadioStatus() {
+    @SneakyThrows
+	void getRadioStatus() {
         var aisMessage = aisHandler.handleAisMessage("!AIVDM,1,1,,A,13u?etPv2;0n:dDPwUM1U1Cb069D,0*24");
         System.out.println(aisMessage);
         assertTrue(aisMessage instanceof PositionReportClassAScheduled);

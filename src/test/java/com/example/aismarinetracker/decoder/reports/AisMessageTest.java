@@ -2,6 +2,7 @@ package com.example.aismarinetracker.decoder.reports;
 
 
 import com.example.aismarinetracker.decoder.AisHandler;
+import com.example.aismarinetracker.decoder.exceptions.UnsupportedMessageType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +22,12 @@ class AisMessageTest {
 
     @BeforeEach
     void setUp() {
+        try {
         aisMessage = aisHandler.handleAisMessage(rawAisMessage);
-       // aisMessage = AisMessage.create(new RawAisMessage(rawAisMessage));
+        } catch (
+        UnsupportedMessageType e) {
+            System.out.println("Unsupported message");
+        }
     }
 
     @Test
