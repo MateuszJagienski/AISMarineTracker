@@ -13,16 +13,21 @@ public class AisValidator {
     }
 
     public static boolean isMessageFormatValid(String message) {
-        if (message.split(",").length != 7) {
-            logger.info("Invalid number of fields");
-            return false;
-        }
+        if (!validateMessageFieldCount(message)) return false;
         if (!message.startsWith("!AIVDM") && !message.startsWith("!BSVDM") && !message.startsWith("!AIVDO") && !message.startsWith("!BSVDO")) {
             logger.info("Invalid message prefix expected: !AIVDM or !BSVDM but was: " + message.substring(0, 6));
             return false;
         }
 
         return isCheckSumValid(message);
+    }
+
+    public static boolean validateMessageFieldCount(String message) {
+        if (message.split(",").length != 7) {
+            logger.info("Invalid number of fields");
+            return false;
+        }
+        return true;
     }
 
     public static boolean isCheckSumValid(String message) {
