@@ -6,6 +6,7 @@ import com.example.aismarinetracker.decoder.reports.AisMessage;
 import com.example.aismarinetracker.decoder.reports.PositionReport;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -60,18 +61,17 @@ public class PopupShip extends VerticalLayout {
         var vlName = new VerticalLayout();
         vlName.setPadding(false);
         vlName.setSpacing(false);
-        var shipName = "<div><strong>Ship name:</strong>" + shipData.getVesselName() + "</div>";
-        var name = new Html(shipName);
-        name.setId("ship_name");
         if (shipData.getShipType() == null) {
             shipData.setShipType(ShipType.NotAvailable);
         }
-        System.out.println("shipData.getShipType(): " + shipData.getShipType());
-        var shipType = "<div><strong>Ship type:</strong>" + shipData.getShipType() + "</div>";
+        var anchorName = new Anchor("/ship/"  + shipData.getMmsi());
+        anchorName.setTarget("_blank");
+        anchorName.setText("Ship name: " + shipData.getVesselName());
 
+        var shipType = "<div><strong>Ship type:</strong>" + shipData.getShipType() + "</div>";
         var type = new Html(shipType);
         type.setId("ship_type");
-        vlName.add(name, type);
+        vlName.add(anchorName, type);
         hl.add(vlName);
         hl.setAlignItems(FlexComponent.Alignment.CENTER);
         hl.getStyle().setDisplay(Style.Display.FLEX);
