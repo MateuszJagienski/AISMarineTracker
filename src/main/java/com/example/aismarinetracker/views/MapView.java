@@ -4,6 +4,9 @@ import com.example.aismarinetracker.decoder.*;
 import com.example.aismarinetracker.decoder.enums.ShipType;
 import com.example.aismarinetracker.decoder.exceptions.InvalidCoordinatesException;
 import com.example.aismarinetracker.decoder.reports.*;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -29,7 +32,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 @Route("map")
-@PreserveOnRefresh
 @CssImport("./themes/th/styles.css")
 public class MapView extends VerticalLayout {
 
@@ -47,6 +49,7 @@ public class MapView extends VerticalLayout {
     private PopupShip popupShip = new PopupShip();
     private final UdpListener udpListener;
     private final AisFromFile aisFromFile;
+    private UI ui;
     private static final Logger logger = Logger.getLogger(MapView.class.getName());
 
 
@@ -101,6 +104,17 @@ public class MapView extends VerticalLayout {
 
         add(hl);
         add(popupShip);
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        ui = attachEvent.getUI();
+        System.out.println("Attach");
+    }
+
+    @Override
+    protected void onDetach(DetachEvent detachEvent) {
+        stopSimulation();
     }
 
     private void updateMap(int reportNumber) throws FileNotFoundException, InterruptedException {
@@ -172,9 +186,11 @@ public class MapView extends VerticalLayout {
     }
 
     ReportsEvent reportsEvent = reportsContainer -> {
-        getUI().ifPresent(ui -> ui.access(() -> {
+        logger.info("Inside reports Event");
+        ui.access(() -> {
+            logger.info("UPDATE UI");
             updateMapSimulation(reportsContainer);
-        }));
+        });
     };
 
     private void startSimulation() {
