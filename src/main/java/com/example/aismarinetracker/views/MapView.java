@@ -2,11 +2,13 @@ package com.example.aismarinetracker.views;
 
 import com.example.aismarinetracker.decoder.*;
 import com.example.aismarinetracker.decoder.enums.ShipType;
+import com.example.aismarinetracker.decoder.exceptions.InvalidCoordinatesException;
 import com.example.aismarinetracker.decoder.reports.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -36,10 +38,12 @@ public class MapView extends VerticalLayout {
     private List<ReportsContainer> reportsContainers;
     private static Map<Integer, List<AisMessage>> currentReports;
     private static Map<Integer, ShipData> currentShipData = new HashMap<>();
-    private TextField reportTime;
-    private ComboBox<File> aisDataPicker;
-    private Checkbox toggleFilters;
-    private ComboBox<ShipType.SimplifiedShipType> shipTypeFilter;
+    private Span reportTime = new Span("Time");
+    private ComboBox<File> aisDataPicker = new ComboBox<>("Sources");
+    private Checkbox toggleFilters = new Checkbox();
+    private Checkbox toggleNameFilter = new Checkbox();
+    private ComboBox<ShipType.SimplifiedShipType> shipTypeFilter = new ComboBox<>();
+    private TextField shipName = new TextField("Ship name or MMSI");
     private PopupShip popupShip = new PopupShip();
     private final UdpListener udpListener;
     private final AisFromFile aisFromFile;
@@ -61,14 +65,11 @@ public class MapView extends VerticalLayout {
         });
 
         popupShip.addTrackButtonClickListener(e -> {
-            System.out.println("Track btn clicked!");
+            logger.info("Track btn clicked!");
         });
-        reportTime = new TextField("Data");
-        reportTime.setReadOnly(true);
         add(this.map);
         this.setSizeFull();
         var hl = new HorizontalLayout();
-        aisDataPicker = new ComboBox<>("Sources");
         File folder = new File("src/main/resources/META-INF/resources/aisdata");
         File[] listOfFiles = folder.listFiles();
 
@@ -84,30 +85,9 @@ public class MapView extends VerticalLayout {
         var stop = new Icon(VaadinIcon.STOP);
         toggleButton.setIcon(play);
         AtomicBoolean isSimulationRunning = new AtomicBoolean(false);
-        toggleFilters = new Checkbox();
-        shipTypeFilter = new ComboBox<>();
         shipTypeFilter.setItems(ShipType.SimplifiedShipType.values());
-        hl.add(aisDataPicker, numberField, reportTime, toggleButton, shipTypeFilter, toggleFilters);
+        hl.add(aisDataPicker, numberField, reportTime, toggleButton, shipTypeFilter, toggleFilters, shipName, toggleNameFilter);
 
-//        aisDataPicker.addValueChangeListener(e -> {
-//            try {
-//                updateSource();
-//            } catch (FileNotFoundException fileNotFoundException) {
-//                fileNotFoundException.printStackTrace();
-//            } catch (InterruptedException ex) {
-//                throw new RuntimeException(ex);
-//            }
-//        });
-//
-//        numberField.addValueChangeListener(e -> {
-//            try {
-//                updateMap(numberField.getOptionalValue().orElse(1.0).intValue());
-//            } catch (FileNotFoundException fileNotFoundException) {
-//                fileNotFoundException.printStackTrace();
-//            } catch (InterruptedException ex) {
-//                throw new RuntimeException(ex);
-//            }
-//        });
         toggleButton.addClickListener(e -> {
             if (isSimulationRunning.get()) {
                 stopSimulation();
@@ -139,11 +119,12 @@ public class MapView extends VerticalLayout {
                 var shipData = new ShipData(entry.getValue());
                 currentShipData.put(shipData.getMmsi(), shipData);
                 addMarker(shipData);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (InvalidCoordinatesException e) {
+                logger.info("Invalid coordinates");
+                return;
             }
         }
-        reportTime.setValue(String.valueOf(reportsContainers.get(reportNumber).getTime()));
+        reportTime.setText(String.valueOf(reportsContainers.get(reportNumber).getTime()));
     }
 
     private void updateSource() throws FileNotFoundException, InterruptedException {
@@ -165,21 +146,28 @@ public class MapView extends VerticalLayout {
             try {
                 var shipData = new ShipData(entry.getValue());
                 currentShipData.put(shipData.getMmsi(), shipData);
-                if (checkFilters(shipData))
-                    addMarker(shipData);
-            } catch (Exception e) {
-                logger.info("Placing icon on map failed! " + e.getClass().getName());
+                if (checkFilters(shipData)) addMarker(shipData);
+            } catch (InvalidCoordinatesException e) {
+                logger.info("Invalid coordinates");
+                return;
             }
         }
-        reportTime.setValue(String.valueOf(time));
+        reportTime.setText(String.valueOf(time));
     }
 
     private boolean checkFilters(ShipData shipData) {
-        if (!toggleFilters.getValue()) return true;
-        // check ship type
-        var simplifiedShipType = ShipType.from(shipData.getShipType());
-        if (!simplifiedShipType.equals(shipTypeFilter.getValue()))
-            return false;
+        if (toggleFilters.getValue()) {
+            var simplifiedShipType = ShipType.from(shipData.getShipType());
+            if (!simplifiedShipType.equals(shipTypeFilter.getValue()))
+                return false;
+        }
+        if (toggleNameFilter.getValue() && shipName.getValue() != null) {
+            var pattern = shipName.getValue();
+            var name = shipData.getVesselName();
+            if (name == null) name = String.valueOf(shipData.getMmsi());
+            if (!pattern.matches(name))
+                return false;
+        }
         return true;
     }
 
