@@ -7,8 +7,11 @@ import com.example.aismarinetracker.decoder.reports.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -54,6 +57,8 @@ public class ShipData {
         try {
             validate();
         } catch (Exception e) {
+            var message= messages.stream().map(s -> Arrays.toString(s.getMessageRaw())).collect(Collectors.joining(", "));
+            logger.info("Invalid message: " + message);
             logger.info("Validating message failed! " + e.getClass().getName());
             throw e;
         }

@@ -38,7 +38,9 @@ public class AisHandler {
             rawAisMessages[0] = createRawAisMessage(nmeaMessage[0]);
         }
         var messagePayload = Decoders.undoArmouringToBinaryString(Decoders.concatenateMessagesPayloads(rawAisMessages));
-        return aisMessageFactory.createAisMessage(messagePayload);
+        var ais = aisMessageFactory.createAisMessage(messagePayload);
+        ais.setMessageRaw(nmeaMessage);
+        return ais;
     }
 
     private RawAisMessage createRawAisMessage(String nmeaMessage) {
