@@ -38,7 +38,7 @@ public class UdpListener {
         try {
             handleMessageEvent(message1);
         } catch (Exception e) {
-            logger.info("Creating AisMessage failed " + e.getClass().getName());
+            logger.info("Creating AisMessage failed: " + e.getClass().getName());
         }
     };
 
@@ -82,7 +82,7 @@ public class UdpListener {
         }
     }
 
-    private Map<Integer, List<AisMessage>> mapReports(AisMessage aisMessage) {
+    private synchronized Map<Integer, List<AisMessage>> mapReports(AisMessage aisMessage) {
         associatedReports.computeIfPresent(aisMessage.getMMSI(), (k, v) -> {
             v = v.stream()
                     .filter(x -> !x.getMessageType().equals(aisMessage.getMessageType()))

@@ -1,11 +1,11 @@
 package com.example.aismarinetracker.decoder;
 
 
+import com.example.aismarinetracker.decoder.enums.MessageType;
 import com.example.aismarinetracker.decoder.exceptions.UnsupportedMessageType;
 import com.example.aismarinetracker.decoder.reports.AisMessage;
 import com.example.aismarinetracker.decoder.reports.AisMessageFactory;
 import com.sun.tools.javac.Main;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.logging.Level;
@@ -38,9 +38,14 @@ public class AisHandler {
             rawAisMessages[0] = createRawAisMessage(nmeaMessage[0]);
         }
         var messagePayload = Decoders.undoArmouringToBinaryString(Decoders.concatenateMessagesPayloads(rawAisMessages));
-        var ais = aisMessageFactory.createAisMessage(messagePayload);
-        ais.setMessageRaw(nmeaMessage);
-        return ais;
+        try {
+            var ais = aisMessageFactory.createAisMessage(messagePayload);
+            ais.setMessageRaw(nmeaMessage);
+            return ais;
+        } catch (UnsupportedMessageType e) {
+            logger.info("Unsupported message: " + MessageType.from(Decoders.toUnsignedInteger(messagePayload.substring(0, 6))) + " " + nmeaMessage[0]);
+            throw e;
+        }
     }
 
     private RawAisMessage createRawAisMessage(String nmeaMessage) {

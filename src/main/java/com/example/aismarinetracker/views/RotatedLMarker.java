@@ -12,14 +12,10 @@ import java.util.UUID;
 public class RotatedLMarker extends LMarker {
 
     private LDivIcon lDivIcon;
-    private Div div;
-    private String uniqueTag;
     private Integer MMSI;
-
 
     public RotatedLMarker(ShipData shipData) {
         super(shipData.getLatitude(), shipData.getLongitude(), String.valueOf(UUID.randomUUID()));
-        uniqueTag = super.getTag();
         super.setDivIcon(createRotatedIcon(shipData));
     }
 
@@ -46,25 +42,6 @@ public class RotatedLMarker extends LMarker {
         lDivIcon = new LDivIcon(html);
         lDivIcon.setClassName("");
         return lDivIcon;
-    }
-//<img src="%s" width="24" height="24" style="transform: rotate(%ddeg);">
-    public void setAngle(int angle) {
-        String html = """
-                <img src="%s" style="transform: rotate(%ddeg);">
-                """.formatted(lDivIcon.getHtml(), angle);
-        lDivIcon.setHtml(html);
-        super.setDivIcon(lDivIcon);
-    }
-
-    public Div getDiv() {
-        return div;
-    }
-
-    public RotatedLMarker getByTag(String tag) {
-        if (tag.equals(uniqueTag)) {
-            return this;
-        }
-        return null;
     }
 
     public Integer getMMSI() {

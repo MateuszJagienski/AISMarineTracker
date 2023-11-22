@@ -18,7 +18,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import software.xdev.vaadin.maps.leaflet.flow.LMap;
@@ -37,25 +36,21 @@ public class MapView extends VerticalLayout {
 
     private LMap map;
     private final List<LComponent> componentsOnMap = new ArrayList<>();
-    private List<ReportsContainer> reportsContainers;
     private static Map<Integer, List<AisMessage>> currentReports;
     private static Map<Integer, ShipData> currentShipData = new HashMap<>();
     private Span reportTime = new Span("Time");
-    private ComboBox<File> aisDataPicker = new ComboBox<>("Sources");
     private Checkbox toggleFilters = new Checkbox();
     private Checkbox toggleNameFilter = new Checkbox();
     private ComboBox<ShipType.SimplifiedShipType> shipTypeFilter = new ComboBox<>();
     private TextField shipName = new TextField("Ship name or MMSI");
     private PopupShip popupShip = new PopupShip();
     private final UdpListener udpListener;
-    private final AisFromFile aisFromFile;
     private UI ui;
     private static final Logger logger = Logger.getLogger(MapView.class.getName());
 
 
     @Autowired
-    public MapView(AisFromFile aisFromFile, UdpListener udpListener) {
-        this.aisFromFile = aisFromFile;
+    public MapView(UdpListener udpListener) {
         this.udpListener = udpListener;
         this.map = new LMap(49.675126, 12.160733, 10);
         this.map.setTileLayer(LTileLayer.DEFAULT_OPENSTREETMAP_TILE);
@@ -73,23 +68,13 @@ public class MapView extends VerticalLayout {
         add(this.map);
         this.setSizeFull();
         var hl = new HorizontalLayout();
-        File folder = new File("src/main/resources/META-INF/resources/aisdata");
-        File[] listOfFiles = folder.listFiles();
-
-        aisDataPicker.setItems(listOfFiles);
-        aisDataPicker.getStyle().set("--vaadin-combo-box-overlay-width", "350px");
-        aisDataPicker.setValue(listOfFiles != null ? listOfFiles[0] : new File(""));
-        var numberField = new NumberField("Report number");
-        numberField.setMin(1);
-        numberField.setStepButtonsVisible(true);
-        numberField.setStep(10);
         var toggleButton = new Button();
         var play = new Icon(VaadinIcon.PLAY);
         var stop = new Icon(VaadinIcon.STOP);
         toggleButton.setIcon(play);
         AtomicBoolean isSimulationRunning = new AtomicBoolean(false);
         shipTypeFilter.setItems(ShipType.SimplifiedShipType.values());
-        hl.add(aisDataPicker, numberField, reportTime, toggleButton, shipTypeFilter, toggleFilters, shipName, toggleNameFilter);
+        hl.add(reportTime, toggleButton, shipTypeFilter, toggleFilters, shipName, toggleNameFilter);
 
         toggleButton.addClickListener(e -> {
             if (isSimulationRunning.get()) {
@@ -117,56 +102,26 @@ public class MapView extends VerticalLayout {
         stopSimulation();
     }
 
-    private void updateMap(int reportNumber) throws FileNotFoundException, InterruptedException {
-        if (reportsContainers == null) {
-            updateSource();
-        }
-        if (!componentsOnMap.isEmpty()) {
-            this.map.removeLComponents(componentsOnMap);
-        }
-        currentReports = reportsContainers.get(reportNumber).getReports();
-        for (var entry : currentReports.entrySet()) {
-            if (entry.getValue().isEmpty()) {
-                continue;
-            }
-            try {
-                var shipData = new ShipData(entry.getValue());
-                currentShipData.put(shipData.getMmsi(), shipData);
-                addMarker(shipData);
-            } catch (InvalidCoordinatesException e) {
-                logger.info("Invalid coordinates");
-                return;
-            }
-        }
-        reportTime.setText(String.valueOf(reportsContainers.get(reportNumber).getTime()));
-    }
-
-    private void updateSource() throws FileNotFoundException, InterruptedException {
-        AisFromFile.updateAisFilePath(aisDataPicker.getValue().toString());
-        reportsContainers = aisFromFile.readFromFile();
-        updateMap(1);
-    }
-
     private void updateMapSimulation(ReportsContainer reportsContainer) {
         currentReports = reportsContainer.getReports();
         var time = reportsContainer.getTime();
         if (!componentsOnMap.isEmpty()) {
             this.map.removeLComponents(componentsOnMap);
         }
+        consumeMessage();
+        reportTime.setText(String.valueOf(time));
+    }
+
+    private synchronized void consumeMessage() {
         for (var entry : currentReports.entrySet()) {
-            if (entry.getValue().isEmpty()) {
-                continue;
-            }
             try {
                 var shipData = new ShipData(entry.getValue());
                 currentShipData.put(shipData.getMmsi(), shipData);
                 if (checkFilters(shipData)) addMarker(shipData);
             } catch (InvalidCoordinatesException e) {
                 logger.info("Invalid coordinates");
-                return;
             }
         }
-        reportTime.setText(String.valueOf(time));
     }
 
     private boolean checkFilters(ShipData shipData) {
@@ -186,7 +141,6 @@ public class MapView extends VerticalLayout {
     }
 
     ReportsEvent reportsEvent = reportsContainer -> {
-        logger.info("Inside reports Event");
         ui.access(() -> {
             logger.info("UPDATE UI");
             updateMapSimulation(reportsContainer);

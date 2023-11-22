@@ -1,5 +1,6 @@
 package com.example.aismarinetracker.views;
 
+import com.example.aismarinetracker.decoder.ReportsContainer;
 import com.example.aismarinetracker.decoder.reports.AisMessage;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.orderedlayout.Scroller;
@@ -23,9 +24,13 @@ public class DetailedShipView extends VerticalLayout implements BeforeEnterObser
         System.out.println("beforeEnter");
         currentMMSI = Integer.parseInt(beforeEnterEvent.getRouteParameters().get("mmsi").orElse("0"));
         this.currentReports = MapView.getCurrentReports();
-        if (currentReports == null || currentReports.get(currentMMSI) == null) {
+        if (checkIfReportsExists()) {
             beforeEnterEvent.rerouteTo(MapView.class);
         }
+    }
+
+    private synchronized boolean checkIfReportsExists() {
+        return (currentReports == null || currentReports.get(currentMMSI) == null);
     }
 
     @Override
