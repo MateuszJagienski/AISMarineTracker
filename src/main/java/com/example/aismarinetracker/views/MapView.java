@@ -141,10 +141,17 @@ public class MapView extends VerticalLayout {
     }
 
     ReportsEvent reportsEvent = reportsContainer -> {
-        ui.access(() -> {
-            logger.info("UPDATE UI");
-            updateMapSimulation(reportsContainer);
+        currentReports = reportsContainer.getReports();
+        var time = reportsContainer.getTime();
+        logger.info("UPDATE UI");
+        ui.accessSynchronously(() -> {
+            if (!componentsOnMap.isEmpty()) {
+                this.map.removeLComponents(componentsOnMap);
+            }
+            consumeMessage();
+            reportTime.setText(String.valueOf(time));
         });
+        //System.gc();
     };
 
     private void startSimulation() {

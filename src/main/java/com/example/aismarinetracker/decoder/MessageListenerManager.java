@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,8 +21,7 @@ public class MessageListenerManager {
 
 
     public void startListening() {
-        if (udpThread != null && udpThread.isAlive()) return;
-       udpThread = new Thread(() -> {
+        CompletableFuture.runAsync(() -> {
            try {
                // Creating a UDP socket on the specified port
                socket = new DatagramSocket(port);
@@ -47,7 +47,6 @@ public class MessageListenerManager {
                logger.info("Inside: " + getClass() + "Exception in: " + e.getClass().getName());
            }
        });
-       udpThread.start();
     }
 
     public void addMessageListener(MessageListener messageListener) {
