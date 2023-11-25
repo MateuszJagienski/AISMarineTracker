@@ -41,7 +41,7 @@ public class MapView extends VerticalLayout {
     private Span reportTime = new Span("Time");
     private Checkbox toggleFilters = new Checkbox();
     private Checkbox toggleNameFilter = new Checkbox();
-    private ComboBox<ShipType.SimplifiedShipType> shipTypeFilter = new ComboBox<>();
+    private ComboBox<ShipType.SimplifiedShipType> shipTypeFilter = new ComboBox<>("Ship type");
     private TextField shipName = new TextField("Ship name or MMSI");
     private PopupShip popupShip = new PopupShip();
     private final UdpListener udpListener;
@@ -68,6 +68,7 @@ public class MapView extends VerticalLayout {
         add(this.map);
         this.setSizeFull();
         var hl = new HorizontalLayout();
+        hl.setAlignItems(Alignment.BASELINE);
         var toggleButton = new Button();
         var play = new Icon(VaadinIcon.PLAY);
         var stop = new Icon(VaadinIcon.STOP);

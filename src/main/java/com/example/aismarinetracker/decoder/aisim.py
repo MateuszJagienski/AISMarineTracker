@@ -9,7 +9,7 @@ def read_data_from_file(file_name):
     return data
 
 # Function to send data via UDP
-def send_data_via_udp(data, host='127.0.0.1', port=12346):
+def send_data_via_udp(data, host='127.0.0.1', port=1111):
     udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     num = 0
@@ -36,7 +36,7 @@ if __name__ == "__main__":
         data = read_data_from_file(file_name)
 
         udp_host = '127.0.0.1'
-        udp_port = 12346
+        udp_port = 1111
 
         if len(sys.argv) >= 3:
             udp_host = sys.argv[2]  # UDP Host

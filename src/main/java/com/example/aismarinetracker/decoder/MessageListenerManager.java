@@ -1,5 +1,6 @@
 package com.example.aismarinetracker.decoder;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -13,7 +14,11 @@ import java.util.logging.Logger;
 
 @Component
 public class MessageListenerManager {
-    private final int port = 12346;
+
+    @Value("${port}")
+    private int port;
+    @Value("${address}")
+    private String address;
     private final List<MessageListener> messageListeners = new CopyOnWriteArrayList<>();
     private DatagramSocket socket;
     private Thread udpThread;
@@ -21,6 +26,15 @@ public class MessageListenerManager {
 
 
     public void startListening() {
+        logger.info("Start listening on address: " + address + " port: " + port);
+        InetAddress inetAddress = null;
+        try {
+            inetAddress = InetAddress.getByName(address);
+        } catch (UnknownHostException e) {
+            logger.warning(e.getClass().getName());
+        }
+        InetAddress finalInetAddress = inetAddress;
+        logger.info("InetAddress: " + (finalInetAddress != null ? finalInetAddress.getHostAddress() : null));
         CompletableFuture.runAsync(() -> {
            try {
                // Creating a UDP socket on the specified port
@@ -32,7 +46,7 @@ public class MessageListenerManager {
                    byte[] receiveData = new byte[1024];
 
                    // Creating a packet to receive data
-                   DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                   DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length, finalInetAddress, port);
 
                    // Receiving data
                    socket.receive(receivePacket);
