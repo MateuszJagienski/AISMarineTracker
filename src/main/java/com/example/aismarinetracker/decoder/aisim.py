@@ -9,7 +9,7 @@ def read_data_from_file(file_name):
     return data
 
 # Function to send data via UDP
-def send_data_via_udp(data, host='127.0.0.1', port=1111):
+def send_data_via_udp(data, host='127.0.0.1', port=12346):
     udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     num = 0
@@ -19,7 +19,7 @@ def send_data_via_udp(data, host='127.0.0.1', port=1111):
             udp_socket.sendto(line.encode(), (host, port))
             print(line)
             num = 0  # Reset the counter for immediate sending
-        elif num == 3:  # If no ',2,' found and count reaches 3, delay sending
+        elif num == 50:  # If no ',2,' found and count reaches 3, delay sending
             time.sleep(1)
             num = 0
         else:
@@ -36,7 +36,7 @@ if __name__ == "__main__":
         data = read_data_from_file(file_name)
 
         udp_host = '127.0.0.1'
-        udp_port = 1111
+        udp_port = 12346
 
         if len(sys.argv) >= 3:
             udp_host = sys.argv[2]  # UDP Host

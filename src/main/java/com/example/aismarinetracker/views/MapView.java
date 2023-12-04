@@ -24,8 +24,6 @@ import software.xdev.vaadin.maps.leaflet.flow.LMap;
 import software.xdev.vaadin.maps.leaflet.flow.data.LComponent;
 import software.xdev.vaadin.maps.leaflet.flow.data.LTileLayer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
@@ -39,10 +37,12 @@ public class MapView extends VerticalLayout {
     private static Map<Integer, List<AisMessage>> currentReports;
     private static Map<Integer, ShipData> currentShipData = new HashMap<>();
     private Span reportTime = new Span("Time");
-    private Checkbox toggleFilters = new Checkbox();
+    private Checkbox toggleShipTypeFilter = new Checkbox();
     private Checkbox toggleNameFilter = new Checkbox();
+    private Checkbox toggleSpeedFilter = new Checkbox();
     private ComboBox<ShipType.SimplifiedShipType> shipTypeFilter = new ComboBox<>("Ship type");
     private TextField shipName = new TextField("Ship name or MMSI");
+    private NumberField shipSpeed = new NumberField("Speed");
     private PopupShip popupShip = new PopupShip();
     private final UdpListener udpListener;
     private UI ui;
@@ -75,7 +75,7 @@ public class MapView extends VerticalLayout {
         toggleButton.setIcon(play);
         AtomicBoolean isSimulationRunning = new AtomicBoolean(false);
         shipTypeFilter.setItems(ShipType.SimplifiedShipType.values());
-        hl.add(reportTime, toggleButton, shipTypeFilter, toggleFilters, shipName, toggleNameFilter);
+        hl.add(reportTime, toggleButton, shipTypeFilter, toggleShipTypeFilter, shipName, toggleNameFilter, shipSpeed, toggleSpeedFilter);
 
         toggleButton.addClickListener(e -> {
             if (isSimulationRunning.get()) {
@@ -126,7 +126,7 @@ public class MapView extends VerticalLayout {
     }
 
     private boolean checkFilters(ShipData shipData) {
-        if (toggleFilters.getValue()) {
+        if (toggleShipTypeFilter.getValue()) {
             var simplifiedShipType = ShipType.from(shipData.getShipType());
             if (!simplifiedShipType.equals(shipTypeFilter.getValue()))
                 return false;
@@ -137,6 +137,9 @@ public class MapView extends VerticalLayout {
             if (name == null) name = String.valueOf(shipData.getMmsi());
             if (!pattern.matches(name))
                 return false;
+        }
+        if (toggleSpeedFilter.getValue() && !shipSpeed.isEmpty()) {
+            return !(shipData.getSpeedOverGround() < shipSpeed.getValue());
         }
         return true;
     }
