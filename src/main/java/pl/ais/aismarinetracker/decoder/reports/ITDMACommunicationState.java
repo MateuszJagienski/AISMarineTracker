@@ -1,0 +1,29 @@
+package pl.ais.aismarinetracker.decoder.reports;
+
+import pl.ais.aismarinetracker.decoder.enums.SyncState;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public class ITDMACommunicationState implements ICommunicationState {
+    private SyncState syncState;
+    private int slotIncrement;
+    private int numberOfSlots;
+    private boolean keepFlag;
+
+    @Override
+    public SyncState getSyncState() {
+        return syncState;
+    }
+
+    @Override
+    public String toString() {
+        return "ITDMACommunicationState{" +
+                "syncState=" + syncState +
+                ", slotIncrement=" + slotIncrement +
+                ", numberOfSlots=" + numberOfSlots +
+                ", keepFlag=" + keepFlag +
+                '}';
+    }
+}
