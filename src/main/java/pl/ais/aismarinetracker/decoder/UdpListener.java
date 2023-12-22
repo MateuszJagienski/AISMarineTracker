@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -21,6 +21,10 @@ public class UdpListener {
     private final AisHandler aisHandler;
     private final MessageListenerManager messageListenerManager;
     private final Stack<String> tempMessage = new Stack<>();
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final BlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
+    private final long delayInSeconds = 1; // Time interval in seconds
+
 
     private static final Logger logger = Logger.getLogger(UdpListener.class.getName());
 
@@ -43,21 +47,41 @@ public class UdpListener {
     };
 
     private void handleMessageEvent(String rawMessage) throws UnsupportedMessageType {
-        AisMessage aisMessage;
-        var messageFields = rawMessage.split(",");
-        if (messageFields[1].equals("2")) {
-            if (messageFields[2].equals("1")) {
-                tempMessage.push(rawMessage);
-                return;
-            } else {
-                aisMessage = aisHandler.handleAisMessage(tempMessage.pop(), rawMessage);
+        messageQueue.offer(rawMessage);
+        scheduleProcessing();
+    }
+
+    private void scheduleProcessing() {
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                processMessage();
+            } catch (UnsupportedMessageType e) {
+                logger.info("Unsupported message!");
             }
-        } else {
-            aisMessage = aisHandler.handleAisMessage(rawMessage);
-        }
-        associatedReports = mapReports(aisMessage);
-        if (aisMessage instanceof BaseStationReport report) {
-            time = LocalDateTime.of(report.getYear(), report.getMonth(), report.getDay(), report.getHour(), report.getMinute(), report.getSecond());
+        }, 0, delayInSeconds, TimeUnit.SECONDS);
+    }
+
+    private void processMessage() throws UnsupportedMessageType {
+        var messages = new ArrayList<String>();
+        messageQueue.drainTo(messages);
+
+        for (String message : messages) {
+            AisMessage aisMessage;
+            var messageFields = message.split(",");
+            if (messageFields[1].equals("2")) {
+                if (messageFields[2].equals("1")) {
+                    tempMessage.push(message);
+                    continue;
+                } else {
+                    aisMessage = aisHandler.handleAisMessage(tempMessage.pop(), message);
+                }
+            } else {
+                aisMessage = aisHandler.handleAisMessage(message);
+            }
+            associatedReports = mapReports(aisMessage);
+            if (aisMessage instanceof BaseStationReport report) {
+                time = LocalDateTime.of(report.getYear(), report.getMonth(), report.getDay(), report.getHour(), report.getMinute(), report.getSecond());
+            }
         }
         fireEvent(new ReportsContainer(associatedReports, time));
     }
