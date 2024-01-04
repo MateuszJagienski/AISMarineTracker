@@ -18,47 +18,30 @@ public class MessageListenerManager {
     @Value("${address}")
     private String address;
     private final List<MessageListener> messageListeners = new CopyOnWriteArrayList<>();
-    private DatagramSocket socket;
-    private Thread udpThread;
+    private AisProvider aisProvider;
     private static final Logger logger = Logger.getLogger(MessageListenerManager.class.getName());
 
+    public enum Provider {
+        UDP, TCP;
+    }
+    private Provider provider = Provider.UDP;
+    private void startListening() {
+        CompletableFuture.runAsync(this::run);
+    }
 
-    public void startListening() {
-        logger.info("Start listening on address: " + address + " port: " + port);
-        InetAddress inetAddress = null;
+    private void run() {
+        logger.info("Listening on: " + address + ":" + port + " " + provider);
         try {
-            inetAddress = InetAddress.getByName(address);
-        } catch (UnknownHostException e) {
-            logger.warning(e.getClass().getName());
+            aisProvider = provider.equals(Provider.TCP) ? new TcpClient() : new UdpClient();
+            aisProvider.open(address, port);
+
+            while (!aisProvider.isClosed()) {
+                String receivedMessage = aisProvider.read();
+                messageListeners.forEach(messageListener -> messageListener.onMessageReceived(receivedMessage));
+            }
+        } catch (IOException e) {
+            logger.info("Inside: " + getClass() + "Exception in: " + e.getClass().getName());
         }
-        InetAddress finalInetAddress = inetAddress;
-        logger.info("InetAddress: " + (finalInetAddress != null ? finalInetAddress.getHostAddress() : null));
-        CompletableFuture.runAsync(() -> {
-           try {
-               // Creating a UDP socket on the specified port
-               socket = new DatagramSocket(port);
-
-               logger.info("Listening on port: " + socket.getLocalPort());
-               while (!socket.isClosed()) {
-                   // Buffer to receive incoming data
-                   byte[] receiveData = new byte[1024];
-
-                   // Creating a packet to receive data
-                   DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length, finalInetAddress, port);
-
-                   // Receiving data
-                   socket.receive(receivePacket);
-
-                   // Converting received data to a string
-                   String receivedMessage = new String(receivePacket.getData(), 0, receivePacket.getLength());
-                   messageListeners.forEach(messageListener -> messageListener.onMessageReceived(receivedMessage));
-
-                   logger.info("Received message: " + receivedMessage);
-               }
-           } catch (IOException e) {
-               logger.info("Inside: " + getClass() + "Exception in: " + e.getClass().getName());
-           }
-       });
     }
 
     public void addMessageListener(MessageListener messageListener) {
@@ -81,8 +64,49 @@ public class MessageListenerManager {
     }
 
     private void closeSocketIfNoListeners() {
-        if (messageListeners.isEmpty() && socket != null && !socket.isClosed())
-            socket.close();
+        if (messageListeners.isEmpty() && aisProvider != null && !aisProvider.isClosed()) {
+            try {
+                aisProvider.close();
+            } catch (IOException e) {
+                logger.info("Inside: " + getClass() + "Exception in: " + e.getClass().getName());
+            }
+        }
+    }
+
+    public void changeSource(String address, int port, Provider provider) {
+        if (!checkConnectionDetails(address, port, provider)) {
+            return;
+        }
+        if (provider.equals(Provider.UDP)) {
+            this.provider = Provider.UDP;
+            this.address = address;
+            this.port = port;
+            closeSocketIfNoListeners();
+        }
+        if (provider.equals(Provider.TCP)) {
+            this.provider = Provider.TCP;
+            this.address = address;
+            this.port = port;
+            closeSocketIfNoListeners();
+        }
+    }
+
+    private boolean checkConnectionDetails(String address, int port, Provider provider) {
+        if (address == null || address.isEmpty()) {
+            logger.info("Invalid address");
+            return false;
+        }
+
+        if (port <= 0 || port > 65535) {
+            logger.info("Invalid port number");
+            return false;
+        }
+
+        if (provider == null) {
+            logger.info("Invalid provider. Should be TCP or UDP");
+            return false;
+        }
+        return true;
     }
 
 }

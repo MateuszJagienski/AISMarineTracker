@@ -6,10 +6,9 @@ import pl.ais.aismarinetracker.decoder.enums.MessageType;
 import pl.ais.aismarinetracker.decoder.exceptions.UnsupportedMessageType;
 import org.springframework.stereotype.Service;
 
-@Service
 public class AisMessageFactory {
 
-    public AisMessage createAisMessage(String messagePayload) throws UnsupportedMessageType {
+    public static AisMessage createAisMessage(String messagePayload) throws UnsupportedMessageType {
         return switch (MessageType.from(Decoders.toUnsignedInteger(messagePayload.substring(0, 6)))) {
             case PositionReportClassA -> new PositionReportClassAScheduled(messagePayload); // type 1
             case PositionReportClassAAssignedSchedule -> new PositionReportClassA(messagePayload); // type 2

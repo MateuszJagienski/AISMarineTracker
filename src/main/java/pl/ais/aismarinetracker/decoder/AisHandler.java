@@ -15,12 +15,10 @@ import java.util.logging.Logger;
 public class AisHandler {
 
     private static final Logger logger = Logger.getLogger(Main.class.getName());
-    private final AisMessageFactory aisMessageFactory;
 
 
-    public AisHandler(AisMessageFactory aisMessageFactory) {
+    public AisHandler() {
         logger.setLevel(Level.ALL);
-        this.aisMessageFactory = aisMessageFactory;
     }
 
     public AisMessage handleAisMessage(String... nmeaMessage) throws UnsupportedMessageType {
@@ -39,7 +37,7 @@ public class AisHandler {
         }
         var messagePayload = Decoders.undoArmouringToBinaryString(Decoders.concatenateMessagesPayloads(rawAisMessages));
         try {
-            var ais = aisMessageFactory.createAisMessage(messagePayload);
+            var ais = AisMessageFactory.createAisMessage(messagePayload);
             ais.setMessageRaw(nmeaMessage);
             return ais;
         } catch (UnsupportedMessageType e) {
