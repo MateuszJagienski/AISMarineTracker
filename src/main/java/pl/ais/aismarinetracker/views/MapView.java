@@ -66,9 +66,6 @@ public class MapView extends VerticalLayout {
             });
         });
 
-        popupShip.addTrackButtonClickListener(e -> {
-            logger.info("Track btn clicked!");
-        });
         add(this.map);
         this.setSizeFull();
         var hl = new HorizontalLayout();
@@ -137,6 +134,7 @@ public class MapView extends VerticalLayout {
     }
 
     private synchronized void consumeMessage() {
+        if (currentReports == null) return;
         for (var entry : currentReports.entrySet()) {
             try {
                 var shipData = new ShipData(entry.getValue());

@@ -20,9 +20,9 @@ public class ShipData {
     private float longitude;
     private float speedOverGround;
     private float courseOverGround;
-    private float trueHeading;
+    private String trueHeading;
     private float draught;
-    private float rateOfTurn;
+    private String rateOfTurn;
     private String vesselName;
     private ShipType shipType;
     private String destination;
@@ -42,11 +42,12 @@ public class ShipData {
                 shipType = report.getShipType();
                 draught = report.getDraught();
                 destination = report.getDestination();
+
             }
             if (e instanceof PositionReport report) {
                 navigationStatus = report.getNavigationStatus();
-                rateOfTurn = report.getRateOfTurn();
-                trueHeading = report.getTrueHeading();
+                rateOfTurn = report.getRateOfTurn() + "";
+                trueHeading = report.getTrueHeading() + "";
             }
             if (e instanceof BaseStationReport report) {
                 latitude = report.getLatitude();
@@ -71,8 +72,11 @@ public class ShipData {
         if (shipType == null) {
             shipType = ShipType.NotAvailable;
         }
-        if (trueHeading == 511) {
-            //
+        if (destination == null) {
+            destination = "Not available";
+        }
+        if (trueHeading == null || trueHeading.equals("511")) {
+            trueHeading = "Not available";
         }
         if (navigationStatus == null) {
             navigationStatus = NavigationStatus.Undefined;

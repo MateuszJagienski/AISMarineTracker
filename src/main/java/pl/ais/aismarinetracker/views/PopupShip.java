@@ -1,19 +1,16 @@
 package pl.ais.aismarinetracker.views;
 
 
-import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Style;
-import com.vaadin.flow.shared.Registration;
 import pl.ais.aismarinetracker.decoder.enums.ShipType;
 
 public class PopupShip extends VerticalLayout {
@@ -59,7 +56,7 @@ public class PopupShip extends VerticalLayout {
         if (shipData.getShipType() == null) {
             shipData.setShipType(ShipType.NotAvailable);
         }
-        var anchorName = new Anchor("/ship/"  + shipData.getMmsi());
+        var anchorName = new Anchor("/ship/" + shipData.getMmsi());
         anchorName.setTarget("_blank");
         anchorName.setText("Ship name: " + shipData.getVesselName());
 
@@ -110,38 +107,16 @@ public class PopupShip extends VerticalLayout {
         var shipLongitude = new Html(longitude);
         shipLongitude.setId("overlay_text");
 
-        var trackButton = new Button("Track");
-        var trackIcon = new Icon(VaadinIcon.ANCHOR);
-        trackButton.setIcon(trackIcon);
-        trackButton.addClickListener(event -> {
-            fireEvent(new ClickTrackEvent(this, true));
-        });
+        var draught = "<div><strong>Draught: </strong>" + shipData.getDraught() + "</div>";
+        var shipDraught = new Html(draught);
+        shipDraught.setId("overlay_text");
 
-        vl.add(hl, shipImage, status, speed, course, shipHeading, shipLatitude, shipLongitude, trackButton);
+        var destination = "<div><strong>Destination: </strong>" + shipData.getDestination() + "</div>";
+        var shipDestination = new Html(destination);
+        shipDestination.setId("overlay_text");
+
+        vl.add(hl, shipImage, status, speed, course, shipHeading, shipDraught, shipDestination, shipLatitude, shipLongitude);
         return vl;
     }
 
-    public Registration addTrackButtonClickListener(ComponentEventListener<ClickTrackEvent> listener) {
-        System.out.println("inside Registration");
-        return addListener(ClickTrackEvent.class, listener);
-    }
-
-    private void drawLine(ShipData shipData) {
-//        var points = new ArrayList<LPoint>();
-//        var currentReport = MapView.getCurrentReports();
-//        var mmsi = shipData.getMmsi();
-//        for (int i = 0; i < currentReport; i++) {
-//            var reports = reportsContainers.get(i);
-//            var report = reports.getReports().get(mmsi);
-//            if (report == null) continue;
-//            report.forEach(e -> {
-//                if (e instanceof PositionReport r) {
-//                    points.add(new LPoint(r.getLatitude(), r.getLongitude()));
-//                }
-//            });
-//        }
-//        var polyline = new LPolyline(points);
-//        polyline.setNoClip(true);
-//        this.map.addLComponents(polyline);
-    }
 }
