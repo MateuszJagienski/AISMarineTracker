@@ -18,6 +18,22 @@ public class RotatedLMarker extends LMarker {
         super.setDivIcon(createRotatedIcon(shipData));
     }
 
+    public RotatedLMarker(float lat, float lon, int angle) {
+        super(lat, lon);
+        super.setDivIcon(createBorderMarker(angle));
+    }
+
+     private LDivIcon createBorderMarker(int angle) {
+        String cssClass = "border";
+        String html = """
+                <div class=%s style="transform: rotate(%ddeg);">
+                </div>
+                """.formatted(cssClass, angle);
+        lDivIcon = new LDivIcon(html);
+        lDivIcon.setClassName("");
+        return lDivIcon;
+    }
+
     private LDivIcon createRotatedIcon(ShipData shipData) {
         var simplifiedShipType = ShipType.from(shipData.getShipType());
         StringBuilder ship = new StringBuilder(switch (simplifiedShipType) {
@@ -39,9 +55,11 @@ public class RotatedLMarker extends LMarker {
                 </div>
                 """.formatted(cssClass, angle);
         lDivIcon = new LDivIcon(html);
-        lDivIcon.setClassName("");
+        lDivIcon.setClassName(""); // workaround
         return lDivIcon;
     }
+
+
 
     public Integer getMMSI() {
         return MMSI;

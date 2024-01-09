@@ -4,8 +4,8 @@ vaadin-grid vaadin-grid-cell-content {
 
 #ship_name {
     font-weight: bold;
-    font-size: 14px;
-    line-height: 14px;
+    font-size: 16px;
+    line-height: 16px;
     color: azure;
     text-underline-color: blue;
 }
@@ -15,8 +15,8 @@ vaadin-grid vaadin-grid-cell-content {
 }
 
 #ship_type {
-    font-size: 12px;
-    line-height: 12px;
+    font-size: 14px;
+    line-height: 14px;
     color: azure;
     text-decoration-color: azure;
 }
@@ -27,7 +27,7 @@ vaadin-grid vaadin-grid-cell-content {
 
 
 #overlay_text {
-    font-size: 12px;
-    line-height: 12px;
+    font-size: 14px;
+    line-height: 14px;
     color: azure;
 }

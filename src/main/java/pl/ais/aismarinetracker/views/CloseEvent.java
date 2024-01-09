@@ -2,8 +2,8 @@ package pl.ais.aismarinetracker.views;
 
 import com.vaadin.flow.component.ComponentEvent;
 
-public class ClickTrackEvent extends ComponentEvent<PopupShip> {
-    public ClickTrackEvent(PopupShip source, boolean fromClient) {
+public class CloseEvent extends ComponentEvent<PopupShip> {
+    public CloseEvent(PopupShip source, boolean fromClient) {
         super(source, fromClient);
     }
 }

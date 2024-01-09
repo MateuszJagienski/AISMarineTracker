@@ -25,8 +25,7 @@ import pl.ais.aismarinetracker.decoder.enums.ShipType;
 import pl.ais.aismarinetracker.decoder.exceptions.InvalidCoordinatesException;
 import pl.ais.aismarinetracker.decoder.reports.AisMessage;
 import software.xdev.vaadin.maps.leaflet.flow.LMap;
-import software.xdev.vaadin.maps.leaflet.flow.data.LComponent;
-import software.xdev.vaadin.maps.leaflet.flow.data.LTileLayer;
+import software.xdev.vaadin.maps.leaflet.flow.data.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -40,6 +39,8 @@ public class MapView extends VerticalLayout {
     private final List<LComponent> componentsOnMap = new ArrayList<>();
     private static Map<Integer, List<AisMessage>> currentReports;
     private static Map<Integer, ShipData> currentShipData = new HashMap<>();
+    private RotatedLMarker borderMarker;
+    private int selectedShipMMSI = -1;
     private Span reportTime = new Span("Time");
     private Checkbox toggleShipTypeFilter = new Checkbox();
     private Checkbox toggleNameFilter = new Checkbox();
@@ -56,14 +57,21 @@ public class MapView extends VerticalLayout {
     @Autowired
     public MapView(Listener listener) {
         this.listener = listener;
-        this.map = new LMap(49.675126, 12.160733, 10);
+        this.map = new LMap(53.89358, 14.264965, 10);
         this.map.setTileLayer(LTileLayer.DEFAULT_OPENSTREETMAP_TILE);
         this.map.setSizeFull();
         this.map.addMarkerClickListener(ev -> {
             var marker = getMarkerByTag(ev.getTag());
             marker.ifPresent(e -> {
-                popupShip.showOverlay(currentShipData.get(marker.get().getMMSI()));
+                var shipData = currentShipData.get(marker.get().getMMSI());
+                placeBorder(shipData);
+                popupShip.showOverlay(shipData);
             });
+        });
+
+        popupShip.addCloseButtonClickListener(e -> {
+            selectedShipMMSI = -1;
+            removeBorder();
         });
 
         add(this.map);
@@ -181,6 +189,10 @@ public class MapView extends VerticalLayout {
                 this.map.removeLComponents(componentsOnMap);
             }
             consumeMessage();
+            if (selectedShipMMSI != -1) {
+                var shipData = currentShipData.get(selectedShipMMSI);
+                placeBorder(shipData);
+            }
         });
     }
 
@@ -204,10 +216,23 @@ public class MapView extends VerticalLayout {
         componentsOnMap.add(marker);
         this.map.addLComponents(marker);
     }
+
     private Optional<RotatedLMarker> getMarkerByTag(String tag) {
         return componentsOnMap.stream()
                 .map(c -> (RotatedLMarker) c)
                 .filter(c -> c.getTag().equals(tag))
                 .findFirst();
     }
+
+    private void placeBorder(ShipData shipData) {
+        removeBorder();
+        selectedShipMMSI = shipData.getMmsi();
+        borderMarker = new RotatedLMarker(shipData.getLatitude(), shipData.getLongitude(), (int) shipData.getCourseOverGround());
+        this.map.addLComponents(borderMarker);
+    }
+
+    private void removeBorder() {
+        if (borderMarker != null) this.map.removeLComponents(borderMarker);
+    }
+
 }

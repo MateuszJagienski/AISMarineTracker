@@ -1,16 +1,16 @@
 package pl.ais.aismarinetracker.views;
 
 
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Style;
+import com.vaadin.flow.shared.Registration;
 import pl.ais.aismarinetracker.decoder.enums.ShipType;
 
 public class PopupShip extends VerticalLayout {
@@ -33,8 +33,12 @@ public class PopupShip extends VerticalLayout {
         this.add(createOverlayView());
     }
 
-    public void closeOverlay() {
+    private void closeOverlay() {
         this.removeAll();
+    }
+
+    public Registration addCloseButtonClickListener(ComponentEventListener<CloseEvent> listener) {
+        return addListener(CloseEvent.class, listener);
     }
 
     public VerticalLayout createOverlayView() {
@@ -76,12 +80,9 @@ public class PopupShip extends VerticalLayout {
         closeButton.getStyle().set("margin-right", "10px");
         closeButton.addClickListener(event -> {
             closeOverlay();
+            fireEvent(new CloseEvent(this, true));
         });
         hl.add(closeButton);
-
-        var shipImage = new Image("img/720x480_Vessel_on_sea.jpg", "ship");
-        shipImage.setHeight(225, Unit.PIXELS);
-        shipImage.setWidth(320, Unit.PIXELS);
 
         var navigationStatus = "<div><strong>Navigation status: </strong>" + shipData.getNavigationStatus() + "</div>";
         var status = new Html(navigationStatus);
@@ -115,7 +116,7 @@ public class PopupShip extends VerticalLayout {
         var shipDestination = new Html(destination);
         shipDestination.setId("overlay_text");
 
-        vl.add(hl, shipImage, status, speed, course, shipHeading, shipDraught, shipDestination, shipLatitude, shipLongitude);
+        vl.add(hl, status, speed, course, shipHeading, shipDraught, shipDestination, shipLatitude, shipLongitude);
         return vl;
     }
 
