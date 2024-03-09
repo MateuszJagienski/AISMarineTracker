@@ -13,7 +13,7 @@ AIS Marine Tracker is a spring boot Java application specifically implemented fo
 ## Installation
 
 1. **Pre-Requisites** Install Java 17 JDK and Apache Maven
-2. **Clone the project** `git clone git@github.com:MateuszJagienski/ais-marine-tracker.git`
+2. **Clone the project** `git clone git@github.com:MateuszJagienski/AISMarineTracker.git`
 3. **Run** `mvn clean install` then `mvn pring-boot:run`
 4. **Create package** Navigate to the cloned directory and use the command `mvn clean package -Pproduction` to create jar file, then execute `java -jar AISMarineTracker-0.0.1-SNAPSHOT.jar`.
 5. **Run ais simulator** `python3 src/main/java/pl/ais/aismarinetracker/decoder/aisim.py src/main/resources/META-INF/resources/aisdata/allAisData.txt`
